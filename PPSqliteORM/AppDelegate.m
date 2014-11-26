@@ -7,6 +7,11 @@
 //
 
 #import "AppDelegate.h"
+#include "Device.h"
+#import "SubDevice.h"
+
+#import "PPSqliteORMManager.h"
+
 
 @interface AppDelegate ()
 
@@ -14,9 +19,44 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+//    NSLog(@"Dict=%@", [[SubDevice variableMap] allKeys]);
+    
+    PPSqliteORMManager* manager = [PPSqliteORMManager defaultManager];
+    [manager registerClass:[SubDevice class] complete:^(BOOL successed, id result) {
+        NSLog(@"successed=%d", successed);
+    }];
+    
+    SubDevice* dev = [[SubDevice alloc] init];
+    dev.device_id =@"100";
+    dev.device_name = @"室内机110";
+    dev.is_active = YES;
+    dev.is_bind = YES;
+    dev.is_online = NO;
+
+    SubDevice* dev1 = [[SubDevice alloc] init];
+    dev1.device_id =@"110";
+    dev1.device_name = @"室内机120";
+    dev1.is_active = YES;
+    dev1.is_bind = YES;
+    dev1.is_online = NO;
+
+    
+    [manager writeObject:dev complete:^(BOOL successed, id result) {
+        NSLog(@"write dev successed=%d", successed);
+    }];
+    
+    [manager writeObject:dev1 complete:^(BOOL successed, id result) {
+        NSLog(@"write dev1 successed=%d", successed);;
+    }];
+
+
+//    [manager unregisterClass:[SubDevice class] complete:^(BOOL successed, id result) {
+//        NSLog(@"successed=%d", successed);
+//    }];
+    
     return YES;
 }
 
