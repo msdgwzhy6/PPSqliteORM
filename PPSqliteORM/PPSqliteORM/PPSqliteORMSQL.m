@@ -30,20 +30,18 @@
 
 @implementation PPSqliteORMSQL
 
++ (NSString* )sqlForQueryAllTables {
+    return [NSString stringWithFormat:@"SELECT name FROM sqlite_master WHERE type = 'table'"];
+}
+
 + (NSString* )sqlForCreateTable:(Class<PPSqliteORMProtocol>)clazz {
     static NSDictionary* typeMap;
     typeMap = kObjectCTypeToSqliteTypeMap;
     
     //Table Name
     NSString* tableName = [clazz tableName];
+    NSString* primaryKey = [clazz primary];
     
-    //Primary Key
-    NSString* primaryKey;
-    
-    //(NSObject*) Only used to remove warning
-    if ([(NSObject*)clazz respondsToSelector:@selector(primaryKey)]) {
-        primaryKey = [clazz primaryKey];
-    }
     
     //Attributes
     NSMutableString* columns = [NSMutableString string];
@@ -90,6 +88,14 @@
     }
 
     return [NSString stringWithFormat:@"REPLACE INTO %@ (%@) VALUES (%@)", tableName, columns, values];
+}
+
++ (NSString* )sqlForDelete:(id<PPSqliteORMProtocol>)object {
+    NSString* tableName = [[object class] tableName];
+    NSString* primaryKey = [[object class] primary];
+
+    return [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ = %@", tableName, primaryKey, [[(NSObject*)object valueForKey:primaryKey] sqlValue]];
+    
 }
 
 @end

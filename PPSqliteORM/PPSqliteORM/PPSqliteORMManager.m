@@ -46,6 +46,7 @@
 
 - (void)registerClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
     NSAssert(clazz, @"Register class can't be Nil");
+    NSAssert([clazz primary], @"Regiser Name can't be nil");
     
     NSString* sql = [PPSqliteORMSQL sqlForCreateTable:clazz];
     NSLog(@"createsql=%@", sql);
@@ -57,7 +58,7 @@
         if (![db tableExists:[clazz tableName]]) {
             successed = [db executeUpdate:sql];
             if (!successed) {
-                result = [PPSqliteORMError errorWithCode:PPSqliteORMRegisterFailed];
+                result = PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed);
             }
         }
         
@@ -67,6 +68,7 @@
 
 - (void)unregisterClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
     NSAssert(clazz, @"Register class can't be Nil");
+    NSAssert([clazz primary], @"Regiser Name can't be nil");
     
     NSString* sql = [PPSqliteORMSQL sqlForDropTable:clazz];
     
@@ -77,13 +79,12 @@
         if ([db tableExists:[clazz tableName]]) {
             successed = [db executeUpdate:sql];
             if (successed) {
-                result = [PPSqliteORMError errorWithCode:PPSqliteORMUnregisterFailed];
+                result = PPSqliteORMErrorMacro(PPSqliteORMUnregisterFailed);
             }
         }
         
         if (complete) complete(successed, result);
     }];
-
 }
 
 
@@ -96,11 +97,11 @@
         if ([db tableExists:[[object class] tableName]]) {
             successed = [db executeUpdate:sql];
             if (!successed) {
-                result = [PPSqliteORMError errorWithCode:PPSqliteORMWriteFailed];
+                result = PPSqliteORMErrorMacro(PPSqliteORMWriteFailed);
             }
         } else {
             successed = NO;
-            result = [PPSqliteORMError errorWithCode:PPSqliteORMUsedWithoutRegister];
+            result = PPSqliteORMErrorMacro(PPSqliteORMUsedWithoutRegister);
         }
         
         if (complete) complete(successed, result);
@@ -108,39 +109,73 @@
 }
 
 - (void)writeObjects:(NSArray* )objects complete:(PPSqliteORMComplete)complete {
+
     if ([objects count]) {
-        NSString* tableName = [[objects firstObject] tableName];
-        [_fmdbQueue inDatabase:^(FMDatabase *db) {
-            if (![db tableExists:tableName]) {
-                if (complete) complete(NO, [PPSqliteORMError errorWithCode:PPSqliteORMUsedWithoutRegister]);
-                return;
-            }
-
-            [_fmdbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
-                BOOL successed = YES;
-                for (NSObject<PPSqliteORMProtocol> * object in objects) {
-                    successed = [db executeUpdate:[PPSqliteORMSQL sqlForInsert:object]];
-                    if (!successed) {
-                        *rollback = YES;
-                        if (complete) complete(NO, [PPSqliteORMError errorWithCode:PPSqliteORMWriteFailed]);
-                        return;
-                    }
+        [_fmdbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+            BOOL successed = YES;
+            for (NSObject<PPSqliteORMProtocol> * object in objects) {
+                successed = [db executeUpdate:[PPSqliteORMSQL sqlForInsert:object]];
+                if (!successed) {
+                    *rollback = YES;
+                    if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMWriteFailed));
+                    return;
                 }
-                
-                if (complete) complete(YES, nil);
-            }];
-
+            }
+            
+            if (complete) complete(YES, nil);
         }];
-        
     } else {
         if (complete) complete(YES, nil);
     }
 }
 
 - (void)deleteObject:(id)object complete:(PPSqliteORMComplete)complete {
+    NSString* tableName = [[object class] tableName];
+    NSString* primaryKey = [[object class] primary];
+    
+    //check where assign primary key
+    if (!primaryKey) {
+        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMNotAssignPrimaryKey));
+        return;
+    }
+    
+    //check table
+    [_fmdbQueue inDatabase:^(FMDatabase *db) {
+        if (tableName && [db tableExists:tableName]) {
+            NSString* sql = [PPSqliteORMSQL sqlForDelete:object];
+            BOOL successed = [db executeUpdate:sql];
+            id result;
+            if (!successed) {
+                result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);
+            }
+            
+            if (complete) complete(successed, result);
+        } else {
+            if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMUsedWithoutRegister));
+        }
+    }];
+    
+    
 }
 
 - (void)deleteObjects:(NSArray* )objects complete:(PPSqliteORMComplete)complete {
+    if ([objects count]) {
+        [_fmdbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+            BOOL successed = YES;
+            for (NSObject<PPSqliteORMProtocol> * object in objects) {
+                successed = [db executeUpdate:[PPSqliteORMSQL sqlForDelete:object]];
+                if (!successed) {
+                    *rollback = YES;
+                    if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMWriteFailed));
+                    return;
+                }
+            }
+            
+            if (complete) complete(YES, nil);
+        }];
+    } else {
+        if (complete) complete(YES, nil);
+    }
 }
 
 - (void)read:(Class)clazz filter:(NSString* )condition complete:(PPSqliteORMComplete)complete {

@@ -21,6 +21,14 @@
     return tableName;
 }
 
++ (NSString* )primary {
+    NSString* primaryKey;
+    if ([(NSObject*)[self class] respondsToSelector:@selector(primaryKey)]) {
+        primaryKey = [[self class] primaryKey];
+    }
+    return primaryKey;
+}
+
 + (NSDictionary* )variableMap {
     NSMutableDictionary* map = [NSMutableDictionary dictionary];
     

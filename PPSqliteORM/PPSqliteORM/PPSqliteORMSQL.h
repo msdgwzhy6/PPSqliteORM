@@ -11,8 +11,10 @@
 
 @interface PPSqliteORMSQL : NSObject
 
++ (NSString* )sqlForQueryAllTables;
 + (NSString* )sqlForCreateTable:(Class<PPSqliteORMProtocol>)clazz;
 + (NSString* )sqlForDropTable:(Class<PPSqliteORMProtocol>)clazz;
 + (NSString* )sqlForInsert:(id<PPSqliteORMProtocol>)object;
++ (NSString* )sqlForDelete:(id<PPSqliteORMProtocol>)object;
 
 @end

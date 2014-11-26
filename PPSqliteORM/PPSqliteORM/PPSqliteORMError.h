@@ -14,9 +14,13 @@ enum {
     DEF(PPSqliteORMRegisterFailed = -100,   @"Create database table failed."),
     DEF(PPSqliteORMUnregisterFailed,        @"Drop database table failed."),
     DEF(PPSqliteORMUsedWithoutRegister,     @"Didn't register the class."),
-    DEF(PPSqliteORMWriteFailed,             @"insert failed."),
+    DEF(PPSqliteORMWriteFailed,             @"Insert failed."),
+    DEF(PPSqliteORMNotAssignPrimaryKey,     @"Not assign primary key."),
+    DEF(PPSqliteORMDeleteFailed,            @"Delete failed."),
 
 };
+
+#define PPSqliteORMErrorMacro(__code) [PPSqliteORMError errorWithCode:__code]
 
 @interface PPSqliteORMError : NSError
 

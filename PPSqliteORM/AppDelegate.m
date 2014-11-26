@@ -52,6 +52,14 @@
         NSLog(@"write dev1 successed=%d", successed);;
     }];
 
+    
+    [manager deleteObject:dev complete:^(BOOL successed, id result) {
+        NSLog(@"delete dev successed=%d", successed);;
+    }];
+    
+    [manager writeObjects:@[dev, dev1] complete:^(BOOL successed, id result) {
+        NSLog(@"write dev, dev1 successed=%d", successed);
+    }];
 
 //    [manager unregisterClass:[SubDevice class] complete:^(BOOL successed, id result) {
 //        NSLog(@"successed=%d", successed);
