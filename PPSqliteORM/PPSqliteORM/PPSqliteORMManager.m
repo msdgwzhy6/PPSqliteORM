@@ -45,8 +45,16 @@
 }
 
 - (void)registerClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
-    NSAssert(clazz, @"Register class can't be Nil");
-    NSAssert([clazz primary], @"Regiser Name can't be nil");
+    if (!clazz) {
+        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed));
+        return;
+    }
+    
+    NSString* tableName = [clazz tableName];
+    if (!tableName || [tableName isEqualToString:@""]) {
+        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMTableNameEmpty));
+        return;
+    }
     
     NSString* sql = [PPSqliteORMSQL sqlForCreateTable:clazz];
     NSLog(@"createsql=%@", sql);
@@ -55,7 +63,7 @@
         BOOL successed = YES;
         id result = nil;
         
-        if (![db tableExists:[clazz tableName]]) {
+        if (![db tableExists:tableName]) {
             successed = [db executeUpdate:sql];
             if (!successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed);
@@ -67,8 +75,16 @@
 }
 
 - (void)unregisterClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
-    NSAssert(clazz, @"Register class can't be Nil");
-    NSAssert([clazz primary], @"Regiser Name can't be nil");
+    if (!clazz) {
+        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed));
+        return;
+    }
+    
+    NSString* tableName = [clazz tableName];
+    if (!tableName || [tableName isEqualToString:@""]) {
+        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMTableNameEmpty));
+        return;
+    }
     
     NSString* sql = [PPSqliteORMSQL sqlForDropTable:clazz];
     
@@ -76,13 +92,12 @@
         BOOL successed = YES;
         id result = nil;
         
-        if ([db tableExists:[clazz tableName]]) {
+        if ([db tableExists:tableName]) {
             successed = [db executeUpdate:sql];
             if (successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMUnregisterFailed);
             }
         }
-        
         if (complete) complete(successed, result);
     }];
 }

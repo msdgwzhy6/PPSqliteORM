@@ -12,6 +12,7 @@
 
 enum {
     DEF(PPSqliteORMRegisterFailed = -100,   @"Create database table failed."),
+    DEF(PPSqliteORMTableNameEmpty,          @"Create database table failed."),
     DEF(PPSqliteORMUnregisterFailed,        @"Drop database table failed."),
     DEF(PPSqliteORMUsedWithoutRegister,     @"Didn't register the class."),
     DEF(PPSqliteORMWriteFailed,             @"Insert failed."),

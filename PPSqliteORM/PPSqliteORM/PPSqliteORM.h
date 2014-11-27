@@ -9,4 +9,4 @@
 #import "PPSqliteORMProtocol.h"
 #import "NSObject+PPSqliteORM.h"
 #import "PPSqliteORMError.h"
-#import "PPSqiteORMManager.h"
+#import "PPSqliteORMManager.h"
