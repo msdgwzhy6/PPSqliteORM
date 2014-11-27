@@ -37,7 +37,7 @@ PPSqliteORMAsignPrimaryKey(_code);
 * Currently support follow type:
 
 |Object Type|SQL Type|Format
-|:---|:---|
+|:---|:---|:---|
 |char|INTEGER|
 |unsigned char|INTEGER|
 |short|INTEGER|
