@@ -46,7 +46,7 @@ PPSqliteORMAsignPrimaryKey(_code);
 NSMutableArray* array = [NSMutableArray array];
 
 int num = 100;
-for (int i = 0; i < num; i++) {
+for (int i = 0; i \< num; i++) {
     Student* stu = [[Student alloc] init];
     stu.name = [NSString stringWithFormat:@"学生%d", i];
     stu.sex = rand()&0x1?YES:NO;
