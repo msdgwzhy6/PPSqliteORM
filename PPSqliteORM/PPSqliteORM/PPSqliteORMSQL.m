@@ -98,4 +98,20 @@
     
 }
 
++ (NSString* )sqlForQuery:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition {
+    if (!condition || [condition isEqualToString:@""]) {
+        return [NSString stringWithFormat:@"SELECT * FROM %@", [clazz tableName]];
+    } else {
+        return [NSString stringWithFormat:@"SELECT * FROM %@ WHERE %@", [clazz tableName], condition];
+    }
+}
+
++ (NSString* )sqlForCount:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition {
+    if (!condition || [condition isEqualToString:@""]) {
+        return [NSString stringWithFormat:@"SELECT count(*) FROM %@", [clazz tableName]];
+    } else {
+        return [NSString stringWithFormat:@"SELECT count(*) FROM %@ WHERE %@", [clazz tableName], condition];
+    }
+}
+
 @end

@@ -178,7 +178,43 @@
     }
 }
 
-- (void)read:(Class)clazz filter:(NSString* )condition complete:(PPSqliteORMComplete)complete {
+- (void)read:(Class <PPSqliteORMProtocol>)clazz condition:(NSString* )condition complete:(PPSqliteORMComplete)complete {
+    NSAssert(clazz, @"Register class can't be Nil");
+
+    [_fmdbQueue inDatabase:^(FMDatabase *db) {
+        NSString* sql = [PPSqliteORMSQL sqlForQuery:clazz where:condition];
+        NSLog(@"sql=%@", sql);
+        FMResultSet* rs = [db executeQuery:sql];
+        NSMutableArray* array = [NSMutableArray array];
+        NSArray* allKeys = [[clazz variableMap] allKeys];
+        
+        while ([rs next]) {
+            id obj = [[clazz alloc] init];
+            for (NSString* key in allKeys) {
+                [obj setValue:[rs objectForColumnName:key] forKey:key];
+            }
+            [array addObject:obj];
+        }
+        
+        [rs close];
+        if (complete) complete(YES, [NSArray arrayWithArray:array]);
+    }];
+}
+
+- (void)count:(Class <PPSqliteORMProtocol>)clazz condition:(NSString* )condition complete:(PPSqliteORMComplete)complete {
+    NSAssert(clazz, @"Register class can't be Nil");
+
+    [_fmdbQueue inDatabase:^(FMDatabase *db) {
+        NSString* sql = [PPSqliteORMSQL sqlForCount:clazz where:condition];
+        NSLog(@"sql=%@", sql);
+        FMResultSet* rs = [db executeQuery:sql];
+        NSNumber* result;
+        if ([rs next]) {
+            result = @([rs intForColumnIndex:0]);
+        }
+        [rs close];
+        if (complete) complete(YES, result);
+    }];
 }
 
 @end

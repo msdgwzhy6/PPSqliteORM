@@ -29,36 +29,25 @@
         NSLog(@"successed=%d", successed);
     }];
     
-    SubDevice* dev = [[SubDevice alloc] init];
-    dev.device_id =@"100";
-    dev.device_name = @"室内机110";
-    dev.is_active = YES;
-    dev.is_bind = YES;
-    dev.is_online = NO;
-
-    SubDevice* dev1 = [[SubDevice alloc] init];
-    dev1.device_id =@"110";
-    dev1.device_name = @"室内机120";
-    dev1.is_active = YES;
-    dev1.is_bind = YES;
-    dev1.is_online = NO;
-
+    for (int i = 0; i < 100; i++) {
+        SubDevice* dev = [[SubDevice alloc] init];
+        dev.device_id = [NSString stringWithFormat:@"%d", i];
+        dev.device_name = [NSString stringWithFormat:@"室内机%d", i];
+        dev.is_active = NO;
+        dev.is_bind = YES;
+        dev.is_online = YES;
+        [manager writeObject:dev complete:^(BOOL successed, id result) {
+//            NSLog(@"write dev%d successed=%d", i, successed);
+        }];
+        
+    }
     
-    [manager writeObject:dev complete:^(BOOL successed, id result) {
-        NSLog(@"write dev successed=%d", successed);
+    [manager read:[SubDevice class] condition:nil complete:^(BOOL successed, id result) {
+        NSLog(@"read successed=%d, result = %@", successed, result);
     }];
     
-    [manager writeObject:dev1 complete:^(BOOL successed, id result) {
-        NSLog(@"write dev1 successed=%d", successed);;
-    }];
-
-    
-    [manager deleteObject:dev complete:^(BOOL successed, id result) {
-        NSLog(@"delete dev successed=%d", successed);;
-    }];
-    
-    [manager writeObjects:@[dev, dev1] complete:^(BOOL successed, id result) {
-        NSLog(@"write dev, dev1 successed=%d", successed);
+    [manager count:[SubDevice class] condition:nil complete:^(BOOL successed, id result) {
+        NSLog(@"count successed=%d, result = %@", successed, result);
     }];
 
 //    [manager unregisterClass:[SubDevice class] complete:^(BOOL successed, id result) {

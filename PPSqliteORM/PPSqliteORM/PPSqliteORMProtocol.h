@@ -20,7 +20,8 @@ return __name; \
 #define CompileErrorBlocked \
 + (NSDictionary* )variableMap;\
 + (NSString* )tableName;\
-+ (NSString* )primary;
++ (NSString* )primary;\
++ (instancetype)alloc;
 
 /**
  * Model class need implement this protocol.The Model class should inherit NSObject.

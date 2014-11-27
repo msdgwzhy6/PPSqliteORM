@@ -26,4 +26,8 @@
 PPSqliteORMAsignPrimaryKey(device_id);
 PPSqliteORMAsignRegisterName(@"subdevice");
 
+- (NSString* )description {
+    return [NSString stringWithFormat:@"device_id=%@", device_id];
+}
+
 @end
