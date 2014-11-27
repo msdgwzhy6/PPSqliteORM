@@ -84,6 +84,8 @@
     
     //read
     [manager read:[Student class] condition:@"_code = '201410'" complete:^(BOOL successed, id result) {
+        
+        
         XCTAssert(result, @"Pass");
         XCTAssert([result isKindOfClass:[NSArray class]], @"Pass");
         XCTAssert([result count] == 1, @"Pass");

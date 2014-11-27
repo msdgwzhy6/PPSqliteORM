@@ -77,8 +77,6 @@
     }
     
     NSString* sql = [PPSqliteORMSQL sqlForCreateTable:clazz];
-    NSLog(@"createsql=%@", sql);
-
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         BOOL successed = YES;
         id result = nil;

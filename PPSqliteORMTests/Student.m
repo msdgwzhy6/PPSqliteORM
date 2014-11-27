@@ -11,6 +11,7 @@
 
 @implementation Student
 
+PPSqliteORMAsignRegisterName(@"student");
 PPSqliteORMAsignPrimaryKey(_code);
 
 - (NSString* )description {
