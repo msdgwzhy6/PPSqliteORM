@@ -34,6 +34,28 @@ PPSqliteORMAsignPrimaryKey(_code);
 @end
 </pre>
 
+* Currently support follow type:
+
+|Object Type|SQL Type|Format
+|:---|:---|
+|char|INTEGER|
+|unsigned char|INTEGER|
+|short|INTEGER|
+|unsigned short|INTEGER|
+|int|INTEGER|
+|unsigned int|INTEGER|
+|NSInteger|INTEGER|
+|BOOL|INTEGER|
+|float|REAL|
+|double|REAL|
+|NSString|TEXT|
+|NSMutableString|TEXT
+|NSDate|REAL|
+|NSNumber|INTEGER|
+
+
+
+
 #### (3) Register the Model Class
 <pre>
 [manager registerClass:[Student class] complete:^(BOOL successed, id result) {

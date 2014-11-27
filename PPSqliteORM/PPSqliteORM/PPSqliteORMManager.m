@@ -216,7 +216,6 @@
 
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         NSString* sql = [PPSqliteORMSQL sqlForQuery:clazz where:condition];
-        NSLog(@"sql=%@", sql);
         FMResultSet* rs = [db executeQuery:sql];
         NSMutableArray* array = [NSMutableArray array];
         NSArray* allKeys = [[clazz variableMap] allKeys];
@@ -239,7 +238,6 @@
 
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         NSString* sql = [PPSqliteORMSQL sqlForCount:clazz where:condition];
-        NSLog(@"sql=%@", sql);
         FMResultSet* rs = [db executeQuery:sql];
         NSNumber* result;
         if ([rs next]) {

@@ -67,7 +67,6 @@
     NSMutableString* columns = [NSMutableString string];
     BOOL beAssignPrimaryKey = YES;
     NSDictionary* map = [clazz variableMap];
-    NSLog(@"atributes=%@", map);
     
     BOOL first = YES;
     for (NSString* key in map) {
