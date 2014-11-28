@@ -36,8 +36,10 @@
 + (NSString* )sqlForCreateTable:(Class<PPSqliteORMProtocol>)clazz;
 + (NSArray* )sqlForAlter:(Class<PPSqliteORMProtocol>)clazz columnInfo:(NSDictionary* )columnInfo;
 + (NSString* )sqlForDropTable:(Class<PPSqliteORMProtocol>)clazz;
++ (NSString* )sqlForDropTableName:(NSString* )tableName;
 + (NSString* )sqlForInsert:(id<PPSqliteORMProtocol>)object;
 + (NSString* )sqlForDelete:(id<PPSqliteORMProtocol>)object;
++ (NSString* )sqlForDeleteAll:(Class<PPSqliteORMProtocol>)clazz;
 + (NSString* )sqlForQuery:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition;
 + (NSString* )sqlForCount:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition;
 

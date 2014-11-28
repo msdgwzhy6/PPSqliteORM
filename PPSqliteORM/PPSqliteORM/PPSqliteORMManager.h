@@ -70,6 +70,13 @@ typedef void(^PPSqliteORMComplete)(BOOL successed, id result);
 - (void)unregisterClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete;
 
 /**
+ * Unregister all class from databse.
+ *
+ * @param complete      Callback for complete
+ */
+- (void)unregisterAllClass:(PPSqliteORMComplete)complete;
+
+/**
  * Write the object to database.
  *
  * @param object        The object which will be writed to database
@@ -104,6 +111,14 @@ typedef void(^PPSqliteORMComplete)(BOOL successed, id result);
  * @Note The objects of array must be same belong to same class
  */
 - (void)deleteObjects:(NSArray* )objects complete:(PPSqliteORMComplete)complete;
+
+/**
+ * Delete all objects off this class.
+ *
+ * @param clazz         The array contain object which will be delete from database
+ * @param complete      Callback for complete
+ */
+- (void)deleteAllObjects:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete;
 
 /**
  * Read object from database.

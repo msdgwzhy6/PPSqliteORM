@@ -58,6 +58,7 @@
     self = [super init];
     if (self) {
         NSString* path = [NSString stringWithFormat:@"%@/Documents/PPSqliteORM.sqlite", NSHomeDirectory()];
+        NSLog(@"path=%@", path);
         _fmdbQueue = [FMDatabaseQueue databaseQueueWithPath:path];
     }
     return self;
@@ -148,6 +149,27 @@
     }];
 }
 
+- (void)unregisterAllClass:(PPSqliteORMComplete)complete {
+    [_fmdbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        NSString* sql = [PPSqliteORMSQL sqlForQueryAllTables];
+        FMResultSet* rs = [db executeQuery:sql];
+        BOOL success = YES;
+        id result;
+        while ([rs next]) {
+            sql = [PPSqliteORMSQL sqlForDropTableName:[rs stringForColumn:@"name"]];
+            PPSqliteORMDebug(@"DROP TABLE SQL:%@", sql);
+
+            BOOL success = [db executeUpdate:sql];
+            if (!success) {
+                result = PPSqliteORMErrorMacro(PPSqliteORMUnregisterFailed);
+                *rollback = YES;
+                break;
+            }
+        }
+        [rs close];
+        if (complete) complete(success, result);
+    }];
+}
 
 - (void)writeObject:(id)object complete:(PPSqliteORMComplete)complete {
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
@@ -195,31 +217,33 @@
     NSString* tableName = [[object class] tableName];
     NSString* primaryKey = [[object class] primary];
     
-    //check where assign primary key
-    if (!primaryKey) {
-        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMNotAssignPrimaryKey));
-        return;
-    }
-    
-    //check table
-    [_fmdbQueue inDatabase:^(FMDatabase *db) {
-        if (tableName && [db tableExists:tableName]) {
-            NSString* sql = [PPSqliteORMSQL sqlForDelete:object];
-            PPSqliteORMDebug(@"DELETE VALUE SQL:%@", sql);
-
-            BOOL successed = [db executeUpdate:sql];
-            id result;
-            if (!successed) {
-                result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);
-            }
-            
-            if (complete) complete(successed, result);
-        } else {
-            if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMUsedWithoutRegister));
+    if (object) {
+        //check where assign primary key
+        if (!primaryKey) {
+            if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMNotAssignPrimaryKey));
+            return;
         }
-    }];
-    
-    
+        
+        //check table
+        [_fmdbQueue inDatabase:^(FMDatabase *db) {
+            if (tableName && [db tableExists:tableName]) {
+                NSString* sql = [PPSqliteORMSQL sqlForDelete:object];
+                PPSqliteORMDebug(@"DELETE VALUE SQL:%@", sql);
+                
+                BOOL successed = [db executeUpdate:sql];
+                id result;
+                if (!successed) {
+                    result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);
+                }
+                
+                if (complete) complete(successed, result);
+            } else {
+                if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMUsedWithoutRegister));
+            }
+        }];
+    } else {
+        if (complete) complete(YES, nil);
+    }
 }
 
 - (void)deleteObjects:(NSArray* )objects complete:(PPSqliteORMComplete)complete {
@@ -240,6 +264,19 @@
     } else {
         if (complete) complete(YES, nil);
     }
+}
+
+- (void)deleteAllObjects:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
+    [_fmdbQueue inDatabase:^(FMDatabase *db) {
+        NSString* sql = [PPSqliteORMSQL sqlForDeleteAll:clazz];
+        PPSqliteORMDebug(@"DELETE ALL SQL:%@", sql);
+        BOOL success = [db executeUpdate:sql];
+        id result;
+        if (!success) {
+            result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);
+        }
+        if (complete) complete(success, result);
+    }];
 }
 
 - (void)read:(Class <PPSqliteORMProtocol>)clazz condition:(NSString* )condition complete:(PPSqliteORMComplete)complete {

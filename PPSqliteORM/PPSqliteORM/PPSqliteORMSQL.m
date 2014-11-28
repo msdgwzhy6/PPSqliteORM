@@ -88,6 +88,10 @@
     return [NSString stringWithFormat:@"DROP TABLE %@", tableName];
 }
 
++ (NSString* )sqlForDropTableName:(NSString* )tableName {
+    return [NSString stringWithFormat:@"DROP TABLE %@", tableName];
+}
+
 + (NSString* )sqlForInsert:(id<PPSqliteORMProtocol>)object {
     NSString* tableName = [[object class] tableName];
     NSMutableString* columns = [NSMutableString string];
@@ -120,6 +124,10 @@
     NSString* primaryKey = [[object class] primary];
 
     return [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ = %@", tableName, primaryKey, [[(NSObject*)object valueForKey:primaryKey] sqlValue]];
+}
+
++ (NSString* )sqlForDeleteAll:(Class<PPSqliteORMProtocol>)clazz {
+    return [NSString stringWithFormat:@"DELETE FROM %@", [clazz tableName]];
 }
 
 + (NSString* )sqlForQuery:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition {
