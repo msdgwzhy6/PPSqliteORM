@@ -33,7 +33,6 @@
         stu.code = [NSString stringWithFormat:@"2014%d", i];
         stu.school = @"Fuzhou middle School";
         stu.brithday = [NSDate date];
-        stu.score = 0.12121;
         [array addObject:stu];
     }
     [manager writeObjects:array complete:^(BOOL successed, id result) {

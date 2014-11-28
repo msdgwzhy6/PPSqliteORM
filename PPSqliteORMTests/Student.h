@@ -13,11 +13,5 @@
 @property (nonatomic, strong) NSMutableString* xxx;
 @property (nonatomic, strong) NSString* code;
 @property (nonatomic, strong) NSString* school;
-@property (nonatomic, assign) float score;
-@property (nonatomic, assign) int aa;
-
-@property (nonatomic, strong) NSDate* finishDate;
-@property (nonatomic, assign) Point rect;
-@property (nonatomic, assign) Rect re;
 
 @end
