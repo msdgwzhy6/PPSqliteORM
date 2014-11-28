@@ -32,9 +32,16 @@
 #define PPSqliteORMDebugEnable    1
 
 #if PPSqliteORMDebugEnable
-#define PPSqliteORMDebug NSLog
+#define __FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+
+#define PPSqliteORMDebug(fmt, ...) \
+do {\
+    NSLog(@"[%s:%d]: " fmt,\
+     __FILE, __LINE__, ##__VA_ARGS__);\
+} while(0);
+
 #else
-#define PPSqliteORMDebug
+#define PPSqliteORMDebug(fmt, ...);
 #endif
 
 /**

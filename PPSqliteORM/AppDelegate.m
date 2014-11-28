@@ -19,7 +19,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     PPSqliteORMManager* manager = [PPSqliteORMManager defaultManager];
-//    [manager unregisterClass:[Student class] complete:NULL];
     [manager registerClass:[Student class] complete:NULL];
     srand((unsigned)time(0));
     
@@ -28,11 +27,11 @@
     int num = 100;
     for (int i = 0; i < num; i++) {
         Student* stu = [[Student alloc] init];
-        stu.name = [NSString stringWithFormat:@"学生%d", i];
+        stu.name = [NSString stringWithFormat:@"Student%d", i];
         stu.sex = rand()&0x1?YES:NO;
         stu.age = rand()%100+1;
         stu.code = [NSString stringWithFormat:@"2014%d", i];
-        stu.school = @"福州一中";
+        stu.school = @"Fuzhou middle School";
         stu.brithday = [NSDate date];
         stu.score = 0.12121;
         [array addObject:stu];
