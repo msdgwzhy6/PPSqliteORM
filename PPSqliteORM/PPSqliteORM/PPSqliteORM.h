@@ -26,7 +26,7 @@
  * THE SOFTWARE.
  */
 
-#define PPSqliteORMVersion  0.1.0
+#define PPSqliteORMVersion  @"0.1.0"
 
 #import "PPSqliteORMProtocol.h"
 #import "NSObject+PPSqliteORM.h"

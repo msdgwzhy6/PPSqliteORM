@@ -33,6 +33,9 @@
 #import "PPSqliteORMError.h"
 #import "PPSqliteORMSQL.h"
 
+#if !__has_feature(objc_arc)
+#error PPSqliteORM must be compiled with ARC. Convert your project to ARC or specify the -fobjc-arc flag.
+#endif
 
 @interface PPSqliteORMManager () {
     FMDatabaseQueue*    _fmdbQueue;
