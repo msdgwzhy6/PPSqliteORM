@@ -33,7 +33,7 @@
     return [NSString stringWithFormat:@"\"%@\"", self];
 }
 
-+ (id)valueForSQL:(NSString* )sql {
++ (id)objectForSQL:(NSString* )sql {
     return sql;
 }
 

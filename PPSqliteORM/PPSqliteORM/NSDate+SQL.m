@@ -1,7 +1,7 @@
 /**
- * PPSqliteORMSQL.h
+ * NSDate+SQL.m
  *
- * Provide the sql statement.
+ * Convert Between NSDate and SQL.
  *
  * MIT licence follows:
  *
@@ -26,19 +26,15 @@
  * THE SOFTWARE.
  */
 
-#import <Foundation/Foundation.h>
-#import "PPSqliteORMProtocol.h"
+#import "NSDate+SQL.h"
 
-@interface PPSqliteORMSQL : NSObject
+@implementation NSDate (SQL)
+- (NSString* )sqlValue {
+    return [NSString stringWithFormat:@"%f", [self timeIntervalSinceReferenceDate]];
+}
 
-+ (NSString* )sqlForQueryAllTables;
-+ (NSString* )sqlForTableInfo:(NSString* )tableName;
-+ (NSString* )sqlForCreateTable:(Class<PPSqliteORMProtocol>)clazz;
-+ (NSArray* )sqlForAlter:(Class<PPSqliteORMProtocol>)clazz columnInfo:(NSDictionary* )columnInfo;
-+ (NSString* )sqlForDropTable:(Class<PPSqliteORMProtocol>)clazz;
-+ (NSString* )sqlForInsert:(id<PPSqliteORMProtocol>)object;
-+ (NSString* )sqlForDelete:(id<PPSqliteORMProtocol>)object;
-+ (NSString* )sqlForQuery:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition;
-+ (NSString* )sqlForCount:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition;
++ (id)objectForSQL:(NSString* )sql {
+    return [NSDate dateWithTimeIntervalSinceReferenceDate:[sql doubleValue]];
+}
 
 @end

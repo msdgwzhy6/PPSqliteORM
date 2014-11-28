@@ -29,6 +29,14 @@
 #import <Foundation/Foundation.h>
 #import "PPSqliteORMProtocol.h"
 
+#define PPSqliteORMDebugEnable    1
+
+#if PPSqliteORMDebugEnable
+#define PPSqliteORMDebug NSLog
+#else
+#define PPSqliteORMDebug
+#endif
+
 /**
  * callback block, when successed = NO, result is PPSqliteORMError object.
  */

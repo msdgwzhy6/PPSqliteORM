@@ -72,6 +72,7 @@
         stu.age = rand()%100+1;
         stu.code = [NSString stringWithFormat:@"2014%d", i];
         stu.school = @"福州一中";
+        stu.brithday = [NSDate dateWithTimeIntervalSinceNow:i*100];
         [array addObject:stu];
     }
     [manager writeObjects:array complete:^(BOOL successed, id result) {
@@ -92,6 +93,7 @@
         Student* stu = [result firstObject];
         XCTAssert([stu isKindOfClass:[Student class]], @"Pass");
         XCTAssert([stu.code isEqualToString:@"201410"], @"Pass");
+        NSLog(@"stu=%@", stu);
     }];
     
 }

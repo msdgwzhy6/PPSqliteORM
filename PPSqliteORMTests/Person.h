@@ -13,5 +13,6 @@
 @property (nonatomic, strong) NSString* name;
 @property (nonatomic, assign) BOOL sex;
 @property (nonatomic, assign) NSInteger age;
+@property (nonatomic, strong) NSDate* brithday;
 
 @end

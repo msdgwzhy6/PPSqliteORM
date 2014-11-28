@@ -34,7 +34,7 @@
     return [self stringValue];
 }
 
-+ (id)valueForSQL:(NSString* )sql {
++ (id)objectForSQL:(NSString* )sql {
     NSNumberFormatter *fmt = [[NSNumberFormatter alloc] init];
     return [fmt numberFromString:sql];
 }

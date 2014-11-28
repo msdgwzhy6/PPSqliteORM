@@ -29,6 +29,27 @@
 #import <Foundation/Foundation.h>
 #import "PPSqliteORMProtocol.h"
 
+#define TYPEMAP(__rawType, __objcType, __sqliteType) \
+__rawType:@[__objcType, __sqliteType]
+
+#define kObjectCTypeToSqliteTypeMap \
+@{\
+    TYPEMAP(@"c",               @"NSNumber",        @"INTEGER"),\
+    TYPEMAP(@"C",               @"NSNumber",        @"INTEGER"),\
+    TYPEMAP(@"s",               @"NSNumber",        @"INTEGER"),\
+    TYPEMAP(@"S",               @"NSNumber",        @"INTEGER"),\
+    TYPEMAP(@"i",               @"NSNumber",        @"INTEGER"),\
+    TYPEMAP(@"I",               @"NSNumber",        @"INTEGER"),\
+    TYPEMAP(@"q",               @"NSNumber",        @"INTEGER"),\
+    TYPEMAP(@"B",               @"NSNumber",        @"INTEGER"),\
+    TYPEMAP(@"f",               @"NSNumber",        @"REAL"),\
+    TYPEMAP(@"d",               @"NSNumber",        @"REAL"),\
+    TYPEMAP(@"NSString",        @"NSString",        @"TEXT"),\
+    TYPEMAP(@"NSMutableString", @"NSMutableString", @"TEXT"),\
+    TYPEMAP(@"NSDate",          @"NSDate",          @"REAL"),\
+    TYPEMAP(@"NSNumber",        @"NSNumber",        @"REAL"),\
+}
+
 @interface NSObject (PPSqliteORM) <PPSqliteORMProtocol>
 
 + (NSString* )tableName;
@@ -46,6 +67,6 @@
 /**
  * Convert SQL string to object.
  */
-+ (id)valueForSQL:(NSString* )sql;
++ (id)objectForSQL:(NSString* )sql;
 
 @end

@@ -15,7 +15,10 @@ PPSqliteORMAsignRegisterName(@"student");
 PPSqliteORMAsignPrimaryKey(_code);
 
 - (NSString* )description {
-    return [NSString stringWithFormat:@"name=%@, sex=%d, age=%d, code=%@, school=%@", self.name, self.sex, self.age, self.code, self.school];
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+
+    return [NSString stringWithFormat:@"name=%@, sex=%d, age=%ld, brithday=%@, code=%@, school=%@, score=%f", self.name, self.sex, (long)self.age, [dateFormatter stringFromDate:self.brithday], self.code, self.school, self.score];
 }
 
 @end

@@ -29,39 +29,22 @@
 #import "PPSqliteORMSQL.h"
 #import "NSObject+PPSqliteORM.h"
 
-#define kObjectCTypeToSqliteTypeMap \
-@{\
-    @"c":               @"INTEGER",\
-    @"C":               @"INTEGER",\
-    @"s":               @"INTEGER",\
-    @"S":               @"INTEGER",\
-    @"i":               @"INTEGER",\
-    @"I":               @"INTEGER",\
-    @"q":               @"INTEGER",\
-    @"B":               @"INTEGER",\
-    @"f":               @"REAL",\
-    @"d":               @"REAL",\
-    @"NSString":        @"TEXT",\
-    @"NSMutableString": @"TEXT",\
-    @"NSDate":          @"REAL",\
-    @"NSNumber":        @"INTEGER",\
-}
-
-
 @implementation PPSqliteORMSQL
 
 + (NSString* )sqlForQueryAllTables {
     return [NSString stringWithFormat:@"SELECT name FROM sqlite_master WHERE type = 'table'"];
 }
 
++ (NSString* )sqlForTableInfo:(NSString* )tableName {
+    return [NSString stringWithFormat:@"PRAGMA table_info(%@)", tableName];
+}
+
 + (NSString* )sqlForCreateTable:(Class<PPSqliteORMProtocol>)clazz {
-    static NSDictionary* typeMap;
-    typeMap = kObjectCTypeToSqliteTypeMap;
     
     //Table Name
     NSString* tableName = [clazz tableName];
     NSString* primaryKey = [clazz primary];
-    
+    NSDictionary* typeMap = kObjectCTypeToSqliteTypeMap;
     
     //Attributes
     NSMutableString* columns = [NSMutableString string];
@@ -70,16 +53,34 @@
     
     BOOL first = YES;
     for (NSString* key in map) {
+        if (!typeMap[map[key]]) continue;
+        
         if (!first) [columns appendString:@","];
         first = NO;
-        [columns appendFormat:@"%@ %@", key, typeMap[map[key]]];
+        [columns appendFormat:@"%@ %@", key, typeMap[map[key]][1]];
         if (beAssignPrimaryKey && [primaryKey isEqualToString:key]) {
             [columns appendFormat:@" PRIMARY KEY"];
             beAssignPrimaryKey = NO;
         }
     }
-    
+
     return [NSString stringWithFormat:@"CREATE TABLE %@(%@)", tableName, columns];
+}
+
++ (NSArray* )sqlForAlter:(Class<PPSqliteORMProtocol>)clazz columnInfo:(NSDictionary* )columnInfo {
+    NSDictionary* map = [clazz variableMap];
+    NSMutableArray* array = [NSMutableArray array];
+    NSString* tableName = [clazz tableName];
+    NSDictionary* typeMap = kObjectCTypeToSqliteTypeMap;
+    
+    for (NSString* key in [map allKeys]) {
+        if (!typeMap[map[key]]) continue;
+
+        if (!columnInfo[key]) {
+            [array addObject:[NSString stringWithFormat:@"ALTER TABLE %@ ADD %@ %@", tableName, key, typeMap[map[key]][1]]];
+        }
+    }
+    return [NSArray arrayWithArray:array];
 }
 
 + (NSString* )sqlForDropTable:(Class<PPSqliteORMProtocol>)clazz {
@@ -89,21 +90,26 @@
 
 + (NSString* )sqlForInsert:(id<PPSqliteORMProtocol>)object {
     NSString* tableName = [[object class] tableName];
-    
     NSMutableString* columns = [NSMutableString string];
     NSMutableString* values = [NSMutableString string];
-    
-    NSArray* keys = [[[object class] variableMap] allKeys];
+    NSDictionary* typeMap = kObjectCTypeToSqliteTypeMap;
+
+    NSDictionary* map = [[object class] variableMap];
     BOOL first = YES;
-    for (NSString* key in keys) {
-        if (!first) {
-            [columns appendString:@","];
-            [values appendString:@","];
-        }
-        first = NO;
-        
-        [columns appendString:key];
-        [values appendString:[[(NSObject*)object valueForKey:key] sqlValue]];
+    
+    for (NSString* key in [map allKeys]) {
+        if (!typeMap[map[key]]) continue;
+
+        NSString* value = [[(NSObject*)object valueForKey:key] sqlValue];
+        if (value) {
+            if (!first) {
+                [columns appendString:@","];
+                [values appendString:@","];
+            }
+            first = NO;
+                [columns appendString:key];
+                [values appendString:value?value:@""];
+            }
     }
 
     return [NSString stringWithFormat:@"REPLACE INTO %@ (%@) VALUES (%@)", tableName, columns, values];
@@ -114,7 +120,6 @@
     NSString* primaryKey = [[object class] primary];
 
     return [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ = %@", tableName, primaryKey, [[(NSObject*)object valueForKey:primaryKey] sqlValue]];
-    
 }
 
 + (NSString* )sqlForQuery:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition {

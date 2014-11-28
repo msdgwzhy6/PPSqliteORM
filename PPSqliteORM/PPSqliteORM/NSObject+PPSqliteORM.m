@@ -85,7 +85,7 @@
     return nil;
 }
 
-+ (id)valueForSQL:(NSString* )sql {
++ (id)objectForSQL:(NSString* )sql {
     return nil;
 }
 

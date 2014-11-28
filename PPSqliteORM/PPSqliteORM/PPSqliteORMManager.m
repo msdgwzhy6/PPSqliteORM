@@ -64,6 +64,18 @@
 
 }
 
+- (NSDictionary* )columnInfo:(NSString* )tablename database:(FMDatabase* )db {
+    NSString* sql = [PPSqliteORMSQL sqlForTableInfo:tablename];
+    FMResultSet* rs = [db executeQuery:sql];
+    NSMutableDictionary* info = [NSMutableDictionary dictionary];
+    
+    while ([rs next]) {
+        info[[rs stringForColumn:@"name"]] = [rs stringForColumn:@"type"];
+    }
+    [rs close];
+    return [NSDictionary dictionaryWithDictionary:info];
+}
+
 - (void)registerClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
     if (!clazz) {
         if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed));
@@ -76,21 +88,34 @@
         return;
     }
     
-    NSString* sql = [PPSqliteORMSQL sqlForCreateTable:clazz];
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         BOOL successed = YES;
         id result = nil;
         
         if (![db tableExists:tableName]) {
+            NSString* sql = [PPSqliteORMSQL sqlForCreateTable:clazz];
+            PPSqliteORMDebug(@"CREATE TABLE SQL:%@", sql);
             successed = [db executeUpdate:sql];
             if (!successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed);
+            }
+        } else {//alter
+            NSDictionary* tableInfo = [self columnInfo:[clazz tableName] database:db];
+            NSArray* sqls = [PPSqliteORMSQL sqlForAlter:clazz columnInfo:tableInfo];
+            for (NSString* sql in sqls) {
+                PPSqliteORMDebug(@"ALTER TABLE SQL:%@", sql);
+                successed = [db executeUpdate:sql];
+                if (!successed) {
+                    result = PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed);
+                    break;
+                }
             }
         }
         
         if (complete) complete(successed, result);
     }];
 }
+    
 
 - (void)unregisterClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
     if (!clazz) {
@@ -104,13 +129,13 @@
         return;
     }
     
-    NSString* sql = [PPSqliteORMSQL sqlForDropTable:clazz];
-    
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         BOOL successed = YES;
         id result = nil;
         
         if ([db tableExists:tableName]) {
+            NSString* sql = [PPSqliteORMSQL sqlForDropTable:clazz];
+            PPSqliteORMDebug(@"DROP TABLE SQL:%@", sql);
             successed = [db executeUpdate:sql];
             if (successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMUnregisterFailed);
@@ -122,12 +147,13 @@
 
 
 - (void)writeObject:(id)object complete:(PPSqliteORMComplete)complete {
-    
-    NSString* sql = [PPSqliteORMSQL sqlForInsert:object];
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         BOOL successed = YES;
         id result = nil;
         if ([db tableExists:[[object class] tableName]]) {
+            NSString* sql = [PPSqliteORMSQL sqlForInsert:object];
+            PPSqliteORMDebug(@"INSERT VALUE SQL:%@", sql);
+
             successed = [db executeUpdate:sql];
             if (!successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMWriteFailed);
@@ -176,6 +202,8 @@
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         if (tableName && [db tableExists:tableName]) {
             NSString* sql = [PPSqliteORMSQL sqlForDelete:object];
+            PPSqliteORMDebug(@"DELETE VALUE SQL:%@", sql);
+
             BOOL successed = [db executeUpdate:sql];
             id result;
             if (!successed) {
@@ -216,14 +244,22 @@
 
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         NSString* sql = [PPSqliteORMSQL sqlForQuery:clazz where:condition];
+        PPSqliteORMDebug(@"SELECT SQL:%@", sql);
+
         FMResultSet* rs = [db executeQuery:sql];
         NSMutableArray* array = [NSMutableArray array];
-        NSArray* allKeys = [[clazz variableMap] allKeys];
+        NSArray* columns = [[rs columnNameToIndexMap] allKeys];
+        NSDictionary* variables = [clazz variableMap];
+        NSDictionary* typeMap = kObjectCTypeToSqliteTypeMap;
         
         while ([rs next]) {
             id obj = [[clazz alloc] init];
-            for (NSString* key in allKeys) {
-                [obj setValue:[rs objectForColumnName:key] forKey:key];
+            for (NSString* key in columns) {
+                NSString* className = typeMap[variables[key]][0];
+                Class cls = NSClassFromString(className);
+                if (cls) {
+                    [obj setValue:[cls objectForSQL:[rs stringForColumn:key]] forKey:key];
+                }
             }
             [array addObject:obj];
         }
@@ -238,6 +274,8 @@
 
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         NSString* sql = [PPSqliteORMSQL sqlForCount:clazz where:condition];
+        PPSqliteORMDebug(@"COUNT SQL:%@", sql);
+
         FMResultSet* rs = [db executeQuery:sql];
         NSNumber* result;
         if ([rs next]) {

@@ -38,6 +38,13 @@
 		E4E29D021A26E26400EFB3B5 /* NSNumber+SQL.h in Sources */ = {isa = PBXBuildFile; fileRef = E4D162461A25D074000E1418 /* NSNumber+SQL.h */; };
 		E4E29D031A26E26400EFB3B5 /* NSNumber+SQL.m in Sources */ = {isa = PBXBuildFile; fileRef = E4D162471A25D074000E1418 /* NSNumber+SQL.m */; };
 		E4E29D041A26E26400EFB3B5 /* PPSqliteORM.h in Sources */ = {isa = PBXBuildFile; fileRef = E4D162491A25D33C000E1418 /* PPSqliteORM.h */; };
+		E4E29D071A270C1600EFB3B5 /* NSDate+SQL.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E29D061A270C1600EFB3B5 /* NSDate+SQL.m */; };
+		E4E29D081A270E7000EFB3B5 /* Person.h in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CEB1A26DF3600EFB3B5 /* Person.h */; };
+		E4E29D091A270E7000EFB3B5 /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CEC1A26DF3600EFB3B5 /* Person.m */; };
+		E4E29D0A1A270E7000EFB3B5 /* Student.h in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CF11A26DFFB00EFB3B5 /* Student.h */; };
+		E4E29D0B1A270E7000EFB3B5 /* Student.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CF21A26DFFB00EFB3B5 /* Student.m */; };
+		E4E29D0C1A270E7000EFB3B5 /* Teacher.h in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CF41A26E10C00EFB3B5 /* Teacher.h */; };
+		E4E29D0D1A270E7000EFB3B5 /* Teacher.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CF51A26E10C00EFB3B5 /* Teacher.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +94,8 @@
 		E4E29CF21A26DFFB00EFB3B5 /* Student.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Student.m; sourceTree = "<group>"; };
 		E4E29CF41A26E10C00EFB3B5 /* Teacher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Teacher.h; sourceTree = "<group>"; };
 		E4E29CF51A26E10C00EFB3B5 /* Teacher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Teacher.m; sourceTree = "<group>"; };
+		E4E29D051A270C1600EFB3B5 /* NSDate+SQL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+SQL.h"; sourceTree = "<group>"; };
+		E4E29D061A270C1600EFB3B5 /* NSDate+SQL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+SQL.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +219,8 @@
 				E4D162461A25D074000E1418 /* NSNumber+SQL.h */,
 				E4D162471A25D074000E1418 /* NSNumber+SQL.m */,
 				E4D162491A25D33C000E1418 /* PPSqliteORM.h */,
+				E4E29D051A270C1600EFB3B5 /* NSDate+SQL.h */,
+				E4E29D061A270C1600EFB3B5 /* NSDate+SQL.m */,
 			);
 			path = PPSqliteORM;
 			sourceTree = "<group>";
@@ -349,7 +360,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4E29D081A270E7000EFB3B5 /* Person.h in Sources */,
+				E4E29D091A270E7000EFB3B5 /* Person.m in Sources */,
+				E4E29D0A1A270E7000EFB3B5 /* Student.h in Sources */,
+				E4E29D0B1A270E7000EFB3B5 /* Student.m in Sources */,
+				E4E29D0C1A270E7000EFB3B5 /* Teacher.h in Sources */,
+				E4E29D0D1A270E7000EFB3B5 /* Teacher.m in Sources */,
 				E4D162481A25D074000E1418 /* NSNumber+SQL.m in Sources */,
+				E4E29D071A270C1600EFB3B5 /* NSDate+SQL.m in Sources */,
 				E4D172BF1A2475D300675F3D /* ViewController.m in Sources */,
 				E4D172BC1A2475D300675F3D /* AppDelegate.m in Sources */,
 				E4D162451A25CF35000E1418 /* NSString+SQL.m in Sources */,
