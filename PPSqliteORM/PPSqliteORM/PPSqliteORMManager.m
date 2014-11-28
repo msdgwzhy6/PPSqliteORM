@@ -39,6 +39,7 @@
 
 @interface PPSqliteORMManager () {
     FMDatabaseQueue*    _fmdbQueue;
+    dispatch_queue_t    _queue;
 }
 
 @end
@@ -57,8 +58,10 @@
 - (id)init {
     self = [super init];
     if (self) {
+        _queue = dispatch_queue_create("PPSqliteORMQueue", NULL);
+
         NSString* path = [NSString stringWithFormat:@"%@/Documents/PPSqliteORM.sqlite", NSHomeDirectory()];
-        NSLog(@"path=%@", path);
+        PPSqliteORMDebug(@"SQLITE DB FILE PATH: %@", path);
         _fmdbQueue = [FMDatabaseQueue databaseQueueWithPath:path];
     }
     return self;
@@ -66,6 +69,21 @@
 
 - (void)dealloc {
 
+}
+
+- (void)executeComplete:(PPSqliteORMComplete)complete successed:(BOOL)successed result:(id)result {
+    if (complete) {
+        complete(successed, result);
+    }
+}
+
+//FMDB Don't allow 'inDatabase' nest.
+- (void)executeCompleteAsyn:(PPSqliteORMComplete)complete successed:(BOOL)successed result:(id)result {
+    if (complete) {
+        dispatch_async(_queue, ^{
+            complete(successed, result);
+        });
+    }
 }
 
 - (NSDictionary* )columnInfo:(NSString* )tablename database:(FMDatabase* )db {
@@ -82,13 +100,13 @@
 
 - (void)registerClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
     if (!clazz) {
-        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed));
+        [self executeComplete:complete successed:NO result:PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed)];
         return;
     }
     
     NSString* tableName = [clazz tableName];
     if (!tableName || [tableName isEqualToString:@""]) {
-        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMTableNameEmpty));
+        [self executeComplete:complete successed:NO result:PPSqliteORMErrorMacro(PPSqliteORMTableNameEmpty)];
         return;
     }
     
@@ -116,20 +134,20 @@
             }
         }
         
-        if (complete) complete(successed, result);
+        [self executeCompleteAsyn:complete successed:successed result:result];
     }];
 }
     
 
 - (void)unregisterClass:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
     if (!clazz) {
-        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed));
+        [self executeComplete:complete successed:NO result:PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed)];
         return;
     }
     
     NSString* tableName = [clazz tableName];
     if (!tableName || [tableName isEqualToString:@""]) {
-        if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMTableNameEmpty));
+        [self executeComplete:complete successed:NO result:PPSqliteORMErrorMacro(PPSqliteORMTableNameEmpty)];
         return;
     }
     
@@ -145,7 +163,8 @@
                 result = PPSqliteORMErrorMacro(PPSqliteORMUnregisterFailed);
             }
         }
-        if (complete) complete(successed, result);
+        
+        [self executeCompleteAsyn:complete successed:successed result:result];
     }];
 }
 
@@ -153,7 +172,7 @@
     [_fmdbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         NSString* sql = [PPSqliteORMSQL sqlForQueryAllTables];
         FMResultSet* rs = [db executeQuery:sql];
-        BOOL success = YES;
+        BOOL successed = YES;
         id result;
         while ([rs next]) {
             sql = [PPSqliteORMSQL sqlForDropTableName:[rs stringForColumn:@"name"]];
@@ -167,7 +186,7 @@
             }
         }
         [rs close];
-        if (complete) complete(success, result);
+        [self executeCompleteAsyn:complete successed:successed result:result];
     }];
 }
 
@@ -188,7 +207,7 @@
             result = PPSqliteORMErrorMacro(PPSqliteORMUsedWithoutRegister);
         }
         
-        if (complete) complete(successed, result);
+        [self executeCompleteAsyn:complete successed:successed result:result];
     }];
 }
 
@@ -197,19 +216,20 @@
     if ([objects count]) {
         [_fmdbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
             BOOL successed = YES;
+            id result;
             for (NSObject<PPSqliteORMProtocol> * object in objects) {
                 successed = [db executeUpdate:[PPSqliteORMSQL sqlForInsert:object]];
                 if (!successed) {
                     *rollback = YES;
-                    if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMWriteFailed));
-                    return;
+                    result = PPSqliteORMErrorMacro(PPSqliteORMWriteFailed);
+                    break;
                 }
             }
             
-            if (complete) complete(YES, nil);
+            [self executeCompleteAsyn:complete successed:successed result:result];
         }];
     } else {
-        if (complete) complete(YES, nil);
+        [self executeComplete:complete successed:YES result:nil];
     }
 }
 
@@ -220,26 +240,27 @@
     if (object) {
         //check where assign primary key
         if (!primaryKey) {
-            if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMNotAssignPrimaryKey));
+            [self executeComplete:complete successed:NO result:PPSqliteORMErrorMacro(PPSqliteORMNotAssignPrimaryKey)];
             return;
         }
         
         //check table
         [_fmdbQueue inDatabase:^(FMDatabase *db) {
+            BOOL successed = YES;
+            id result;
+
             if (tableName && [db tableExists:tableName]) {
                 NSString* sql = [PPSqliteORMSQL sqlForDelete:object];
                 PPSqliteORMDebug(@"DELETE VALUE SQL:%@", sql);
                 
-                BOOL successed = [db executeUpdate:sql];
-                id result;
+                successed = [db executeUpdate:sql];
                 if (!successed) {
                     result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);
                 }
-                
-                if (complete) complete(successed, result);
             } else {
-                if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMUsedWithoutRegister));
+                result = PPSqliteORMErrorMacro(PPSqliteORMUsedWithoutRegister);
             }
+            [self executeCompleteAsyn:complete successed:successed result:result];
         }];
     } else {
         if (complete) complete(YES, nil);
@@ -250,19 +271,20 @@
     if ([objects count]) {
         [_fmdbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
             BOOL successed = YES;
+            id result;
             for (NSObject<PPSqliteORMProtocol> * object in objects) {
                 successed = [db executeUpdate:[PPSqliteORMSQL sqlForDelete:object]];
                 if (!successed) {
                     *rollback = YES;
-                    if (complete) complete(NO, PPSqliteORMErrorMacro(PPSqliteORMWriteFailed));
+                    result = PPSqliteORMErrorMacro(PPSqliteORMWriteFailed);
                     return;
                 }
             }
             
-            if (complete) complete(YES, nil);
+            [self executeCompleteAsyn:complete successed:successed result:result];
         }];
     } else {
-        if (complete) complete(YES, nil);
+        [self executeComplete:complete successed:YES result:nil];
     }
 }
 
@@ -270,12 +292,12 @@
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         NSString* sql = [PPSqliteORMSQL sqlForDeleteAll:clazz];
         PPSqliteORMDebug(@"DELETE ALL SQL:%@", sql);
-        BOOL success = [db executeUpdate:sql];
+        BOOL successed = [db executeUpdate:sql];
         id result;
-        if (!success) {
+        if (!successed) {
             result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);
         }
-        if (complete) complete(success, result);
+        [self executeCompleteAsyn:complete successed:successed result:result];
     }];
 }
 
@@ -285,7 +307,7 @@
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         NSString* sql = [PPSqliteORMSQL sqlForQuery:clazz where:condition];
         PPSqliteORMDebug(@"SELECT SQL:%@", sql);
-
+        
         FMResultSet* rs = [db executeQuery:sql];
         NSMutableArray* array = [NSMutableArray array];
         NSArray* columns = [[rs columnNameToIndexMap] allKeys];
@@ -303,9 +325,8 @@
             }
             [array addObject:obj];
         }
-        
         [rs close];
-        if (complete) complete(YES, [NSArray arrayWithArray:array]);
+        [self executeCompleteAsyn:complete successed:YES result:[NSArray arrayWithArray:array]];
     }];
 }
 
@@ -322,7 +343,7 @@
             result = @([rs intForColumnIndex:0]);
         }
         [rs close];
-        if (complete) complete(YES, result);
+        [self executeCompleteAsyn:complete successed:YES result:result];
     }];
 }
 

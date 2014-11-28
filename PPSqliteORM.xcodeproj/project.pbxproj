@@ -45,6 +45,7 @@
 		E4E29D0B1A270E7000EFB3B5 /* Student.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CF21A26DFFB00EFB3B5 /* Student.m */; };
 		E4E29D0C1A270E7000EFB3B5 /* Teacher.h in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CF41A26E10C00EFB3B5 /* Teacher.h */; };
 		E4E29D0D1A270E7000EFB3B5 /* Teacher.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E29CF51A26E10C00EFB3B5 /* Teacher.m */; };
+		E4E29D4E1A28739000EFB3B5 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E29D4D1A28739000EFB3B5 /* DetailViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +97,8 @@
 		E4E29CF51A26E10C00EFB3B5 /* Teacher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Teacher.m; sourceTree = "<group>"; };
 		E4E29D051A270C1600EFB3B5 /* NSDate+SQL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+SQL.h"; sourceTree = "<group>"; };
 		E4E29D061A270C1600EFB3B5 /* NSDate+SQL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+SQL.m"; sourceTree = "<group>"; };
+		E4E29D4C1A28739000EFB3B5 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		E4E29D4D1A28739000EFB3B5 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +169,8 @@
 				E4D172C31A2475D300675F3D /* Images.xcassets */,
 				E4D172C51A2475D300675F3D /* LaunchScreen.xib */,
 				E4D172B61A2475D300675F3D /* Supporting Files */,
+				E4E29D4C1A28739000EFB3B5 /* DetailViewController.h */,
+				E4E29D4D1A28739000EFB3B5 /* DetailViewController.m */,
 			);
 			path = PPSqliteORM;
 			sourceTree = "<group>";
@@ -362,6 +367,7 @@
 			files = (
 				E4E29D081A270E7000EFB3B5 /* Person.h in Sources */,
 				E4E29D091A270E7000EFB3B5 /* Person.m in Sources */,
+				E4E29D4E1A28739000EFB3B5 /* DetailViewController.m in Sources */,
 				E4E29D0A1A270E7000EFB3B5 /* Student.h in Sources */,
 				E4E29D0B1A270E7000EFB3B5 /* Student.m in Sources */,
 				E4E29D0C1A270E7000EFB3B5 /* Teacher.h in Sources */,

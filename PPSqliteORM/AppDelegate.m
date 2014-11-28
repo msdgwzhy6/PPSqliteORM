@@ -24,7 +24,7 @@
     
     NSMutableArray* array = [NSMutableArray array];
     
-    int num = 100;
+    int num = 10;
     for (int i = 0; i < num; i++) {
         Student* stu = [[Student alloc] init];
         stu.name = [NSString stringWithFormat:@"Student%d", i];
