@@ -5,6 +5,10 @@
 PPSqliteORM is ORM(Object/Relation Mapping) operation for sqlite. PPSqliteORM provide a very easy way to operate sqlite database.
 
 ## Getting Start
+### 1. Debug
+If you want to debug, switch PPSqliteORMDebugEnable = 1 in PPSqliteORMManager.h
+
+### 2. Interfaces
 #### (1) Obtain PPSqliteORM Manager
 <pre>
 PPSqliteORMManager* manager = [PPSqliteORMManager defaultManager];
