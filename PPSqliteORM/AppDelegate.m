@@ -7,9 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "PPSqliteORM.h"
-#import "Student.h"
-
 
 @interface AppDelegate ()
 
@@ -18,35 +15,6 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    PPSqliteORMManager* manager = [PPSqliteORMManager defaultManager];
-    [manager registerClass:[Student class] complete:NULL];
-    srand((unsigned)time(0));
-    
-    NSMutableArray* array = [NSMutableArray array];
-    
-    int num = 10;
-    for (int i = 0; i < num; i++) {
-        Student* stu = [[Student alloc] init];
-        stu.name = [NSString stringWithFormat:@"Student%d", i];
-        stu.sex = rand()&0x1?YES:NO;
-        stu.age = rand()%100+1;
-        stu.code = [NSString stringWithFormat:@"2014%d", i];
-        stu.school = @"Fuzhou middle School";
-        stu.brithday = [NSDate date];
-        [array addObject:stu];
-    }
-    [manager writeObjects:array complete:^(BOOL successed, id result) {
-    }];
-    
-    [manager count:[Student class] condition:nil complete:^(BOOL successed, id result) {
-    }];
-    
-    //read
-    [manager read:[Student class] condition:@"_code = '201410'" complete:^(BOOL successed, id result) {
-        Student* stu = [result firstObject];
-        NSLog(@"stu=%@", stu);
-    }];
-    
     return YES;
 }
 
