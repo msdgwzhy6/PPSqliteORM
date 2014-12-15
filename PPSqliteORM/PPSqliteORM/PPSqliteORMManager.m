@@ -50,17 +50,23 @@
     static PPSqliteORMManager* manager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        manager = [[PPSqliteORMManager alloc] init];
+        manager = [[PPSqliteORMManager alloc] initWithDBFilename:@"PPSqliteORM.sqlite"];
     });
     return manager;
 }
 
-- (id)init {
+- (id)initWithDBFilename:(NSString* )filename {
     self = [super init];
     if (self) {
         _queue = dispatch_queue_create("PPSqliteORMQueue", NULL);
-
-        NSString* path = [NSString stringWithFormat:@"%@/Documents/PPSqliteORM.sqlite", NSHomeDirectory()];
+        NSString* basepath = [NSString stringWithFormat:@"%@/Documents/PPSqliteORM", NSHomeDirectory()];
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        
+        if (![fileManager fileExistsAtPath:basepath]) {
+            NSAssert([fileManager createDirectoryAtPath:basepath withIntermediateDirectories:YES attributes:nil error:nil], @"Create Database base path fail");
+        }
+        
+        NSString* path = filename? [NSString stringWithFormat:@"%@/%@", basepath, filename]:nil;
         PPSqliteORMDebug(@"SQLITE DB FILE PATH: %@", path);
         _fmdbQueue = [FMDatabaseQueue databaseQueueWithPath:path];
     }

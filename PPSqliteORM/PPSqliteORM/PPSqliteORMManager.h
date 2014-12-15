@@ -45,13 +45,24 @@ do {\
 #endif
 
 /**
- * callback block, when successed = NO, result is PPSqliteORMError object.
+ * Callback block, when successed = NO, result is PPSqliteORMError object.
  */
 typedef void(^PPSqliteORMComplete)(BOOL successed, id result);
 
 @interface PPSqliteORMManager : NSObject
 
+/**
+ * If you don't need to support multi-database file, you can use defaultManager.
+ */
 + (id)defaultManager;
+
+/**
+ * If you need multi database file, please use this function.
+ *
+ * @param filename point out the database file name(without basepath).if filename=nil, means memory db.
+ */
+- (id)initWithDBFilename:(NSString* )filename;
+
 
 /**
  * Register class to database.
