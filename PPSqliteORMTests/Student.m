@@ -12,7 +12,7 @@
 @implementation Student
 
 PPSqliteORMAsignRegisterName(@"student");
-PPSqliteORMAsignPrimaryKey(_code);
+PPSqliteORMAsignPrimaryKey(code);
 
 - (NSString* )description {
     NSDateFormatter* dateFormatter = [[NSDateFormatter alloc]init];

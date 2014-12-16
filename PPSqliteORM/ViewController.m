@@ -26,6 +26,8 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     _manager = [PPSqliteORMManager defaultManager];
+    [_manager registerClass:[Student class] complete:^(BOOL successed, id result) {
+    }];
     
     [self reload];
 }

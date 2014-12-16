@@ -6,7 +6,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "PPSqliteORMTests/PPSqliteORMTests.m"
@@ -17,6 +17,36 @@
             endingLineNumber = "103"
             landmarkName = "-testPerformanceExample"
             landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[PPSqliteORMTests testPerformanceExample]"
+                  moduleName = "PPSqliteORMTests"
+                  urlString = "file:///Users/starnet/Projects/PPSqliteORM/PPSqliteORMTests/PPSqliteORMTests.m"
+                  timestampString = "440420562.790248"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "103"
+                  endingLineNumber = "103"
+                  offsetFromSymbolStart = "23">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__42-[PPSqliteORMTests testPerformanceExample]_block_invoke"
+                  moduleName = "PPSqliteORMTests"
+                  urlString = "file:///Users/starnet/Projects/PPSqliteORM/PPSqliteORMTests/PPSqliteORMTests.m"
+                  timestampString = "440420562.813412"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "12">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -61,9 +61,9 @@
         _queue = dispatch_queue_create("PPSqliteORMQueue", NULL);
         NSString* basepath = [NSString stringWithFormat:@"%@/Documents/PPSqliteORM", NSHomeDirectory()];
         NSFileManager* fileManager = [NSFileManager defaultManager];
-        
+
         if (![fileManager fileExistsAtPath:basepath]) {
-            NSAssert([fileManager createDirectoryAtPath:basepath withIntermediateDirectories:YES attributes:nil error:nil], @"Create Database base path fail");
+            [fileManager createDirectoryAtPath:basepath withIntermediateDirectories:YES attributes:nil error:nil];
         }
         
         NSString* path = filename? [NSString stringWithFormat:@"%@/%@", basepath, filename]:nil;
@@ -74,7 +74,12 @@
 }
 
 - (void)dealloc {
-
+    [_fmdbQueue close];
+    
+    //之前的ARC不对GCD进行release
+#if !OS_OBJECT_USE_OBJC
+    dispatch_release(_queue);
+#endif
 }
 
 - (void)executeComplete:(PPSqliteORMComplete)complete successed:(BOOL)successed result:(id)result {

@@ -11,6 +11,6 @@
 
 @implementation Teacher
 
-PPSqliteORMAsignPrimaryKey(_code);
+PPSqliteORMAsignPrimaryKey(code);
 
 @end

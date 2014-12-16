@@ -30,7 +30,7 @@
 + (NSString* )primaryKey { \
 return @(#__key); \
 }\
-- (void)__hint {self->__key;}
+- (void)__hint {self.__key;}
 
 #define PPSqliteORMAsignRegisterName(__name) \
 + (NSString* )registerName { \

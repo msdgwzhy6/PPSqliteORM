@@ -64,6 +64,9 @@
                 const char *type = ivar_getTypeEncoding(thisIvar);
                 NSString *stringType =  [NSString stringWithCString:type encoding:NSUTF8StringEncoding];
                 NSString* key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
+                if ([key hasPrefix:@"_"]) {
+                    key = [key substringFromIndex:1];
+                }
                 
                 if ([stringType hasPrefix:@"@"]) {
                     stringType = [stringType substringWithRange:NSMakeRange(2, stringType.length-3)];
