@@ -48,6 +48,7 @@ __rawType:@[__objcType, __sqliteType]
     TYPEMAP(@"NSMutableString", @"NSMutableString", @"TEXT"),\
     TYPEMAP(@"NSDate",          @"NSDate",          @"REAL"),\
     TYPEMAP(@"NSNumber",        @"NSNumber",        @"REAL"),\
+    TYPEMAP(@"NSDictionary",    @"NSDictionary",    @"TEXT"),\
 }
 
 @interface NSObject (PPSqliteORM) <PPSqliteORMProtocol>

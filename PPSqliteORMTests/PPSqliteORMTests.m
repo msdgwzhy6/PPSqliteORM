@@ -73,6 +73,7 @@
         stu.code = [NSString stringWithFormat:@"2014%d", i];
         stu.school = @"福州一中";
         stu.brithday = [NSDate dateWithTimeIntervalSinceNow:i*100];
+        stu.info = @{@"hello":@"world"};
         [array addObject:stu];
     }
     [manager writeObjects:array complete:^(BOOL successed, id result) {

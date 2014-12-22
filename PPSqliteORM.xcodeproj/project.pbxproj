@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		14221A937CE0CCEC02148AEE /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16EB05890808EF7B926E2ED2 /* libPods.a */; };
+		E4967E8B1A47C57600899C8F /* NSDictionary+SQL.m in Sources */ = {isa = PBXBuildFile; fileRef = E4967E8A1A47C57600899C8F /* NSDictionary+SQL.m */; };
 		E4D1623C1A25B5B1000E1418 /* PPSqliteORMError.m in Sources */ = {isa = PBXBuildFile; fileRef = E4D1623B1A25B5B1000E1418 /* PPSqliteORMError.m */; };
 		E4D162421A25BF5F000E1418 /* PPSqliteORMSQL.m in Sources */ = {isa = PBXBuildFile; fileRef = E4D162411A25BF5F000E1418 /* PPSqliteORMSQL.m */; };
 		E4D162451A25CF35000E1418 /* NSString+SQL.m in Sources */ = {isa = PBXBuildFile; fileRef = E4D162441A25CF35000E1418 /* NSString+SQL.m */; };
@@ -62,6 +63,8 @@
 		16EB05890808EF7B926E2ED2 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3DEC12D31F6B61EAED21BBC /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		E0D684E172368150D6D7725D /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		E4967E891A47C57600899C8F /* NSDictionary+SQL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+SQL.h"; sourceTree = "<group>"; };
+		E4967E8A1A47C57600899C8F /* NSDictionary+SQL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+SQL.m"; sourceTree = "<group>"; };
 		E4D1623A1A25B5B1000E1418 /* PPSqliteORMError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPSqliteORMError.h; sourceTree = "<group>"; };
 		E4D1623B1A25B5B1000E1418 /* PPSqliteORMError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PPSqliteORMError.m; sourceTree = "<group>"; };
 		E4D162401A25BF5F000E1418 /* PPSqliteORMSQL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPSqliteORMSQL.h; sourceTree = "<group>"; };
@@ -226,6 +229,8 @@
 				E4D162471A25D074000E1418 /* NSNumber+SQL.m */,
 				E4E29D051A270C1600EFB3B5 /* NSDate+SQL.h */,
 				E4E29D061A270C1600EFB3B5 /* NSDate+SQL.m */,
+				E4967E891A47C57600899C8F /* NSDictionary+SQL.h */,
+				E4967E8A1A47C57600899C8F /* NSDictionary+SQL.m */,
 			);
 			path = PPSqliteORM;
 			sourceTree = "<group>";
@@ -368,6 +373,7 @@
 				E4E29D081A270E7000EFB3B5 /* Person.h in Sources */,
 				E4E29D091A270E7000EFB3B5 /* Person.m in Sources */,
 				E4E29D4E1A28739000EFB3B5 /* DetailViewController.m in Sources */,
+				E4967E8B1A47C57600899C8F /* NSDictionary+SQL.m in Sources */,
 				E4E29D0A1A270E7000EFB3B5 /* Student.h in Sources */,
 				E4E29D0B1A270E7000EFB3B5 /* Student.m in Sources */,
 				E4E29D0C1A270E7000EFB3B5 /* Teacher.h in Sources */,
