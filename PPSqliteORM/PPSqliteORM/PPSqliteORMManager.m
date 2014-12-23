@@ -127,8 +127,8 @@
         
         if (![db tableExists:tableName]) {
             NSString* sql = [PPSqliteORMSQL sqlForCreateTable:clazz];
-            PPSqliteORMDebug(@"CREATE TABLE SQL:%@", sql);
             successed = [db executeUpdate:sql];
+            PPSqliteORMDebug(@"[%d]CREATE TABLE SQL:%@", successed, sql);
             if (!successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed);
             }
@@ -136,8 +136,8 @@
             NSDictionary* tableInfo = [self columnInfo:[clazz tableName] database:db];
             NSArray* sqls = [PPSqliteORMSQL sqlForAlter:clazz columnInfo:tableInfo];
             for (NSString* sql in sqls) {
-                PPSqliteORMDebug(@"ALTER TABLE SQL:%@", sql);
                 successed = [db executeUpdate:sql];
+                PPSqliteORMDebug(@"[%d]ALTER TABLE SQL:%@", successed, sql);
                 if (!successed) {
                     result = PPSqliteORMErrorMacro(PPSqliteORMRegisterFailed);
                     break;
@@ -168,8 +168,8 @@
         
         if ([db tableExists:tableName]) {
             NSString* sql = [PPSqliteORMSQL sqlForDropTable:clazz];
-            PPSqliteORMDebug(@"DROP TABLE SQL:%@", sql);
             successed = [db executeUpdate:sql];
+            PPSqliteORMDebug(@"[%d]DROP TABLE SQL:%@", successed, sql);
             if (successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMUnregisterFailed);
             }
@@ -187,10 +187,9 @@
         id result;
         while ([rs next]) {
             sql = [PPSqliteORMSQL sqlForDropTableName:[rs stringForColumn:@"name"]];
-            PPSqliteORMDebug(@"DROP TABLE SQL:%@", sql);
-
-            BOOL success = [db executeUpdate:sql];
-            if (!success) {
+            successed = [db executeUpdate:sql];
+            PPSqliteORMDebug(@"[%d]DROP TABLE SQL:%@", successed, sql);
+            if (!successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMUnregisterFailed);
                 *rollback = YES;
                 break;
@@ -207,9 +206,16 @@
         id result = nil;
         if ([db tableExists:[[object class] tableName]]) {
             NSString* sql = [PPSqliteORMSQL sqlForInsert:object];
-            PPSqliteORMDebug(@"INSERT VALUE SQL:%@", sql);
-
+            
             successed = [db executeUpdate:sql];
+            PPSqliteORMDebug(@"[%d]INSERT VALUE SQL:%@", successed, sql);
+
+            if (!successed) {
+                sql = [PPSqliteORMSQL sqlForUpdate:object];
+                successed = [db executeUpdate:sql];
+                PPSqliteORMDebug(@"[%d]UPDATE VALUE SQL:%@", successed, sql);
+
+            }
             if (!successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMWriteFailed);
             }
@@ -229,7 +235,15 @@
             BOOL successed = YES;
             id result;
             for (NSObject<PPSqliteORMProtocol> * object in objects) {
-                successed = [db executeUpdate:[PPSqliteORMSQL sqlForInsert:object]];
+                NSString* sql = [PPSqliteORMSQL sqlForInsert:object];
+                successed = [db executeUpdate:sql];
+                PPSqliteORMDebug(@"[%d]INSERT VALUE SQL:%@", successed, sql);
+                if (!successed) {
+                    sql = [PPSqliteORMSQL sqlForUpdate:object];
+                    successed = [db executeUpdate:sql];
+                    PPSqliteORMDebug(@"[%d]UPDATE VALUE SQL:%@", successed, sql);
+                }
+                
                 if (!successed) {
                     *rollback = YES;
                     result = PPSqliteORMErrorMacro(PPSqliteORMWriteFailed);
@@ -262,9 +276,9 @@
 
             if (tableName && [db tableExists:tableName]) {
                 NSString* sql = [PPSqliteORMSQL sqlForDelete:object];
-                PPSqliteORMDebug(@"DELETE VALUE SQL:%@", sql);
-                
                 successed = [db executeUpdate:sql];
+                PPSqliteORMDebug(@"[%d]DELETE VALUE SQL:%@", successed, sql);
+
                 if (!successed) {
                     result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);
                 }
@@ -284,7 +298,10 @@
             BOOL successed = YES;
             id result;
             for (NSObject<PPSqliteORMProtocol> * object in objects) {
-                successed = [db executeUpdate:[PPSqliteORMSQL sqlForDelete:object]];
+                NSString* sql = [PPSqliteORMSQL sqlForDelete:object];
+                successed = [db executeUpdate:sql];
+                PPSqliteORMDebug(@"[%d]DELETE VALUE SQL:%@", successed, sql);
+
                 if (!successed) {
                     *rollback = YES;
                     result = PPSqliteORMErrorMacro(PPSqliteORMWriteFailed);
@@ -302,8 +319,8 @@
 - (void)deleteAllObjects:(Class <PPSqliteORMProtocol>)clazz complete:(PPSqliteORMComplete)complete {
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         NSString* sql = [PPSqliteORMSQL sqlForDeleteAll:clazz];
-        PPSqliteORMDebug(@"DELETE ALL SQL:%@", sql);
         BOOL successed = [db executeUpdate:sql];
+        PPSqliteORMDebug(@"[%d]DELETE ALL SQL:%@", successed, sql);
         id result;
         if (!successed) {
             result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);

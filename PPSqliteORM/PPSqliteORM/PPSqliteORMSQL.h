@@ -38,6 +38,7 @@
 + (NSString* )sqlForDropTable:(Class<PPSqliteORMProtocol>)clazz;
 + (NSString* )sqlForDropTableName:(NSString* )tableName;
 + (NSString* )sqlForInsert:(id<PPSqliteORMProtocol>)object;
++ (NSString* )sqlForUpdate:(id<PPSqliteORMProtocol>)object;
 + (NSString* )sqlForDelete:(id<PPSqliteORMProtocol>)object;
 + (NSString* )sqlForDeleteAll:(Class<PPSqliteORMProtocol>)clazz;
 + (NSString* )sqlForQuery:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition;

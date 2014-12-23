@@ -38,6 +38,22 @@
 
 - (void)testWriteRead {
     PPSqliteORMManager* manager = [PPSqliteORMManager defaultManager];
+    int i = 0;
+    Student* stu = [[Student alloc] init];
+    stu.name = [NSString stringWithFormat:@"学生%d", i];
+    stu.sex = rand()&0x1?YES:NO;
+    stu.age = rand()%100+1;
+    stu.codeTest = [NSString stringWithFormat:@"2014%d", i];
+    stu.schoolName = @"福州一中";
+    stu.brithday = [NSDate dateWithTimeIntervalSinceNow:i*100];
+    stu.info = @{@"hello":@"world"};
+
+    [manager writeObject:stu complete:^(BOOL successed, id result) {
+        NSLog(@"################");
+    }];
+    
+    
+    return;
     srand((unsigned)time(0));
 
     NSMutableArray* array = [NSMutableArray array];

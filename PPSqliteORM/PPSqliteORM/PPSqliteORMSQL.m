@@ -116,7 +116,32 @@
             }
     }
 
-    return [NSString stringWithFormat:@"REPLACE INTO %@ (%@) VALUES (%@)", tableName, columns, values];
+    return [NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)", tableName, columns, values];
+}
+
++ (NSString* )sqlForUpdate:(id<PPSqliteORMProtocol>)object {
+    NSString* tableName = [[object class] tableName];
+    NSMutableString* updateString = [NSMutableString string];
+    NSDictionary* typeMap = kObjectCTypeToSqliteTypeMap;
+    NSString* primaryKey = [[object class] primaryKey];
+    
+    NSDictionary* map = [[object class] variableMap];
+    BOOL first = YES;
+    
+    for (NSString* key in [map allKeys]) {
+        if (!typeMap[map[key]]) continue;
+        
+        NSString* value = [[(NSObject*)object valueForKey:key] sqlValue];
+        if (value) {
+            if (!first) {
+                [updateString appendString:@","];
+            }
+            first = NO;
+            [updateString appendString:[NSString stringWithFormat:@"%@=%@", key, value]];
+        }
+    }
+
+    return [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE %@=%@", tableName, updateString, primaryKey, [[(NSObject*)object valueForKey:primaryKey] sqlValue]];
 }
 
 + (NSString* )sqlForDelete:(id<PPSqliteORMProtocol>)object {
