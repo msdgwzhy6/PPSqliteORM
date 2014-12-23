@@ -10,8 +10,8 @@
 
 @interface Student : Person
 
-@property (nonatomic, strong) NSString* code;
-@property (nonatomic, strong) NSString* school;
+@property (nonatomic, strong) NSString* codeTest;
+@property (nonatomic, strong) NSString* schoolName;
 
 @property (nonatomic, strong) NSDictionary* info;
 

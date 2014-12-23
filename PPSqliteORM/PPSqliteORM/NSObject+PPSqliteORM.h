@@ -61,6 +61,11 @@ __rawType:@[__objcType, __sqliteType]
 + (NSDictionary* )variableMap;
 
 /**
+ * Return the Dictionary which contains all variableName and lowercase of variableName of this object.
+ */
++ (NSDictionary* )lowercaseKeyMap;
+
+/**
  * Convert object to string for SQL insert.
  */
 - (NSString* )sqlValue;

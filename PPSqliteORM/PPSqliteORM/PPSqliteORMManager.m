@@ -324,14 +324,17 @@
         NSArray* columns = [[rs columnNameToIndexMap] allKeys];
         NSDictionary* variables = [clazz variableMap];
         NSDictionary* typeMap = kObjectCTypeToSqliteTypeMap;
+        NSDictionary* keyMap = [clazz lowercaseKeyMap];
         
         while ([rs next]) {
             id obj = [[clazz alloc] init];
             for (NSString* key in columns) {
-                NSString* className = typeMap[variables[key]][0];
+                NSString* varKey = keyMap[key];
+                NSString* className = typeMap[variables[varKey]][0];
+
                 Class cls = NSClassFromString(className);
                 if (cls) {
-                    [obj setValue:[cls objectForSQL:[rs stringForColumn:key]] forKey:key];
+                    [obj setValue:[cls objectForSQL:[rs stringForColumn:key]] forKey:varKey];
                 }
             }
             [array addObject:obj];

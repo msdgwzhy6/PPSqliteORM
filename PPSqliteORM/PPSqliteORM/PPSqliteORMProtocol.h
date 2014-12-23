@@ -41,7 +41,8 @@ return __name; \
 + (NSDictionary* )variableMap;\
 + (NSString* )tableName;\
 + (NSString* )primary;\
-+ (instancetype)alloc;
++ (instancetype)alloc;\
++ (NSDictionary* )lowercaseKeyMap;
 
 /**
  * Model class need implement this protocol.The Model class should inherit NSObject.

@@ -30,36 +30,14 @@
 
 - (void)testRegister {
     PPSqliteORMManager* manager = [PPSqliteORMManager defaultManager];
-    
-    [manager registerClass:Nil complete:^(BOOL successed, id result) {
-        XCTAssert(!successed, @"Register Nil class Pass");
-    }];
 
     [manager registerClass:[Student class] complete:^(BOOL successed, id result) {
         XCTAssert(successed, @"Register Student class Pass");
-    }];
-    
-    [manager registerClass:[Teacher class] complete:^(BOOL successed, id result) {
-        XCTAssert(successed, @"Register Teacher class Pass");
-    }];
-    
-    [manager unregisterClass:Nil complete:^(BOOL successed, id result) {
-        XCTAssert(!successed, @"Unregister Nil class Pass");
-    }];
-
-    [manager unregisterClass:[Student class] complete:^(BOOL successed, id result) {
-        XCTAssert(successed, @"Unregister student class Pass");
-    }];
-    
-    [manager unregisterClass:[Teacher class] complete:^(BOOL successed, id result) {
-        XCTAssert(successed, @"Unregister student class Pass");
     }];
 }
 
 - (void)testWriteRead {
     PPSqliteORMManager* manager = [PPSqliteORMManager defaultManager];
-    [manager registerClass:[Student class] complete:NULL];
-    [manager registerClass:[Person class] complete:NULL];
     srand((unsigned)time(0));
 
     NSMutableArray* array = [NSMutableArray array];
@@ -70,12 +48,13 @@
         stu.name = [NSString stringWithFormat:@"学生%d", i];
         stu.sex = rand()&0x1?YES:NO;
         stu.age = rand()%100+1;
-        stu.code = [NSString stringWithFormat:@"2014%d", i];
-        stu.school = @"福州一中";
+        stu.codeTest = [NSString stringWithFormat:@"2014%d", i];
+        stu.schoolName = @"福州一中";
         stu.brithday = [NSDate dateWithTimeIntervalSinceNow:i*100];
         stu.info = @{@"hello":@"world"};
         [array addObject:stu];
     }
+    
     [manager writeObjects:array complete:^(BOOL successed, id result) {
         XCTAssert(successed, @"Write student ... ");
     }];
@@ -85,7 +64,7 @@
     }];
     
     //read
-    [manager read:[Student class] condition:@"_code = '201410'" complete:^(BOOL successed, id result) {
+    [manager read:[Student class] condition:@"codeTest = '201410'" complete:^(BOOL successed, id result) {
         
         
         XCTAssert(result, @"Pass");
@@ -93,7 +72,7 @@
         XCTAssert([result count] == 1, @"Pass");
         Student* stu = [result firstObject];
         XCTAssert([stu isKindOfClass:[Student class]], @"Pass");
-        XCTAssert([stu.code isEqualToString:@"201410"], @"Pass");
+        XCTAssert([stu.codeTest isEqualToString:@"201410"], @"Pass");
         NSLog(@"stu=%@", stu);
     }];
     

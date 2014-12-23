@@ -26,8 +26,6 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     _manager = [PPSqliteORMManager defaultManager];
-    [_manager registerClass:[Student class] complete:^(BOOL successed, id result) {
-    }];
     
     [self reload];
 }
@@ -68,7 +66,7 @@
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
     
     [cell.textLabel setText:[NSString stringWithFormat:@"%@     %@     %ld     %@", stu.name, stu.sex?@"Girl":@"Boy", (long)stu.age, [dateFormatter stringFromDate:stu.brithday]]];
-    [cell.detailTextLabel setText:[NSString stringWithFormat:@"%@     %@", stu.school, stu.code]];
+    [cell.detailTextLabel setText:[NSString stringWithFormat:@"%@     %@", stu.schoolName, stu.codeTest]];
     return cell;
 }
 
