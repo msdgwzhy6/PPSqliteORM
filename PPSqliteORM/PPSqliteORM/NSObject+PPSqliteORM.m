@@ -50,7 +50,20 @@
     return primaryKey;
 }
 
+static NSMutableDictionary* variableMapCache;
 + (NSDictionary* )variableMap {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        variableMapCache = [NSMutableDictionary dictionary];
+    });
+    
+    //先检查Cache
+    NSString* key = NSStringFromClass([self class]);
+    if (variableMapCache[key]) {
+        return variableMapCache[key];
+    }
+    
+    //没有则生成
     NSMutableDictionary* map = [NSMutableDictionary dictionary];
         
     unsigned int numIvars = 0;
@@ -81,16 +94,34 @@
         clazz = class_getSuperclass(clazz);
     } while(clazz && strcmp(object_getClassName(clazz), "NSObject"));
     
-    return [NSDictionary dictionaryWithDictionary:map];
+    NSDictionary* aMap = [NSDictionary dictionaryWithDictionary:map];
+    variableMapCache[key] = aMap;
+    return aMap;
 }
 
+static NSMutableDictionary* lowercaseKeyMapCache;
 + (NSDictionary* )lowercaseKeyMap {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        lowercaseKeyMapCache = [NSMutableDictionary dictionary];
+    });
+    
+    //先检查Cache
+    NSString* key = NSStringFromClass([self class]);
+    if (lowercaseKeyMapCache[key]) {
+        return lowercaseKeyMapCache[key];
+    }
+
+    //没有则生成
     NSMutableDictionary* map = [NSMutableDictionary dictionary];
     NSDictionary* varMap = [self variableMap];
     for (NSString* key in varMap) {
         map[[key lowercaseString]] = key;
     }
-    return [NSDictionary dictionaryWithDictionary:map];
+    
+    NSDictionary* aMap = [NSDictionary dictionaryWithDictionary:map];
+    variableMapCache[key] = aMap;
+    return aMap;
 }
 
 - (NSString* )sqlValue {
