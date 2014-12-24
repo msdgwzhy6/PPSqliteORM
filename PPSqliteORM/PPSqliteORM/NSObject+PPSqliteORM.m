@@ -120,7 +120,7 @@ static NSMutableDictionary* lowercaseKeyMapCache;
     }
     
     NSDictionary* aMap = [NSDictionary dictionaryWithDictionary:map];
-    variableMapCache[key] = aMap;
+    lowercaseKeyMapCache[key] = aMap;
     return aMap;
 }
 

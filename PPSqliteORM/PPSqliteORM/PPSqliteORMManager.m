@@ -201,6 +201,11 @@
 }
 
 - (void)writeObject:(id)object complete:(PPSqliteORMComplete)complete {
+    if (!object) {
+        if (complete) complete(YES, nil);
+        return;
+    }
+    
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         BOOL successed = YES;
         id result = nil;
