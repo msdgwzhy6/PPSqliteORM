@@ -350,8 +350,9 @@
                 NSString* className = typeMap[variables[varKey]][0];
 
                 Class cls = NSClassFromString(className);
-                if (cls) {
-                    [obj setValue:[cls objectForSQL:[rs stringForColumn:key]] forKey:varKey];
+                id value = [cls objectForSQL:[rs stringForColumn:key]];
+                if (cls && value) {
+                    [obj setValue:value forKey:varKey];
                 }
             }
             [array addObject:obj];
