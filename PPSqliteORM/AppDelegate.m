@@ -7,6 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import "Person.h"
+#import "Student.h"
+#import "PPSqliteORM.h"
 
 @interface AppDelegate ()
 
@@ -15,7 +18,8 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+    NSLog(@"Persion=%@", [Person variableMap]);
+    NSLog(@"Student=%@", [Student variableMap]);
 
     return YES;
 }

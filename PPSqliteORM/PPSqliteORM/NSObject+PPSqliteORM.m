@@ -51,53 +51,45 @@
 }
 
 + (NSDictionary* )variableMap {
-    static NSMutableDictionary* map;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        map = [NSMutableDictionary dictionary];
+    NSMutableDictionary* map = [NSMutableDictionary dictionary];
         
-        unsigned int numIvars = 0;
-        Class clazz = [self class];
-        
-        do {
-            Ivar * ivars = class_copyIvarList(clazz, &numIvars);
-            if (ivars) {
-                for(int i = 0; i < numIvars; i++) {
-                    Ivar thisIvar = ivars[i];
-                    const char *type = ivar_getTypeEncoding(thisIvar);
-                    NSString *stringType =  [NSString stringWithCString:type encoding:NSUTF8StringEncoding];
-                    NSString* key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
-                    if ([key hasPrefix:@"_"]) {
-                        key = [key substringFromIndex:1];
-                    }
-                    
-                    if ([stringType hasPrefix:@"@"]) {
-                        stringType = [stringType substringWithRange:NSMakeRange(2, stringType.length-3)];
-                    } else if ([stringType hasPrefix:@"\""]) {
-                        stringType = [stringType substringWithRange:NSMakeRange(1, stringType.length-2)];
-                    }
-                    map[key] = stringType;
+    unsigned int numIvars = 0;
+    Class clazz = [self class];
+    
+    do {
+        Ivar * ivars = class_copyIvarList(clazz, &numIvars);
+        if (ivars) {
+            for(int i = 0; i < numIvars; i++) {
+                Ivar thisIvar = ivars[i];
+                const char *type = ivar_getTypeEncoding(thisIvar);
+                NSString *stringType =  [NSString stringWithCString:type encoding:NSUTF8StringEncoding];
+                NSString* key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
+                if ([key hasPrefix:@"_"]) {
+                    key = [key substringFromIndex:1];
                 }
-                free(ivars);
+                
+                if ([stringType hasPrefix:@"@"]) {
+                    stringType = [stringType substringWithRange:NSMakeRange(2, stringType.length-3)];
+                } else if ([stringType hasPrefix:@"\""]) {
+                    stringType = [stringType substringWithRange:NSMakeRange(1, stringType.length-2)];
+                }
+                map[key] = stringType;
             }
-            
-            clazz = class_getSuperclass(clazz);
-        } while(clazz && strcmp(object_getClassName(clazz), "NSObject"));
-    });
+            free(ivars);
+        }
+        
+        clazz = class_getSuperclass(clazz);
+    } while(clazz && strcmp(object_getClassName(clazz), "NSObject"));
     
     return [NSDictionary dictionaryWithDictionary:map];
 }
 
 + (NSDictionary* )lowercaseKeyMap {
-    static NSMutableDictionary* map;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        map = [NSMutableDictionary dictionary];
-        NSDictionary* varMap = [self variableMap];
-        for (NSString* key in varMap) {
-            map[[key lowercaseString]] = key;
-        }
-    });
+    NSMutableDictionary* map = [NSMutableDictionary dictionary];
+    NSDictionary* varMap = [self variableMap];
+    for (NSString* key in varMap) {
+        map[[key lowercaseString]] = key;
+    }
     return [NSDictionary dictionaryWithDictionary:map];
 }
 
