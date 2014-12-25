@@ -30,11 +30,11 @@
 
 @implementation NSDate (SQL)
 - (NSString* )sqlValue {
-    return [NSString stringWithFormat:@"%f", [self timeIntervalSinceReferenceDate]];
+    return [NSString stringWithFormat:@"%f", [self timeIntervalSince1970]];
 }
 
 + (id)objectForSQL:(NSString* )sql {
-    return [NSDate dateWithTimeIntervalSinceReferenceDate:[sql doubleValue]];
+    return [NSDate dateWithTimeIntervalSince1970:[sql doubleValue]];
 }
 
 @end

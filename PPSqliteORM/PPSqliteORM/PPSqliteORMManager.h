@@ -108,7 +108,7 @@ typedef void(^PPSqliteORMComplete)(BOOL successed, id result);
 /**
  * Delete object from databse.
  *
- * @param clazz         The object which will be delete from database
+ * @param object         The object which will be delete from database
  * @param complete      Callback for complete
  */
 - (void)deleteObject:(id <PPSqliteORMProtocol>)object complete:(PPSqliteORMComplete)complete;
@@ -116,7 +116,7 @@ typedef void(^PPSqliteORMComplete)(BOOL successed, id result);
 /**
  * Delete objects from databse.
  *
- * @param clazz         The array contain object which will be delete from database
+ * @param objects         The array contain object which will be delete from database
  * @param complete      Callback for complete
  *
  * @Note The objects of array must be same belong to same class
@@ -150,5 +150,14 @@ typedef void(^PPSqliteORMComplete)(BOOL successed, id result);
  *                      result is NSNumber(int) of count
  */
 - (void)count:(Class <PPSqliteORMProtocol>)clazz condition:(NSString* )condition complete:(PPSqliteORMComplete)complete;
+
+
+/**
+ * Check object is exist or not.
+ *  
+ * @param object The object for check
+ * @param complete Callback for complete, successed=YES, mean exist, NO, means not exist.
+ */
+- (void)isExist:(id <PPSqliteORMProtocol>)object complete:(PPSqliteORMComplete)complete;
 
 @end

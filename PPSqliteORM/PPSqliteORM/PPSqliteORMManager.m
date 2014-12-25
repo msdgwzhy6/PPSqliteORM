@@ -200,27 +200,40 @@
     }];
 }
 
+- (BOOL)isExistForObject:(id)object db:(FMDatabase* )db {
+    BOOL exist = NO;
+    NSString* sql = [PPSqliteORMSQL sqlForCheck:object];
+    FMResultSet* rs = [db executeQuery:sql];
+    PPSqliteORMDebug(@"CHECK TABLE SQL:%@", sql);
+    if ([rs next]) {
+        NSLog(@"isExistForObject:%d", [rs intForColumnIndex:0]);
+        exist = YES;
+    }
+    
+    [rs close];
+    return exist;
+}
+
 - (void)writeObject:(id)object complete:(PPSqliteORMComplete)complete {
     if (!object) {
         if (complete) complete(YES, nil);
         return;
     }
-    
+        
     [_fmdbQueue inDatabase:^(FMDatabase *db) {
         BOOL successed = YES;
         id result = nil;
         if ([db tableExists:[[object class] tableName]]) {
-            NSString* sql = [PPSqliteORMSQL sqlForInsert:object];
-            
-            successed = [db executeUpdate:sql];
-            PPSqliteORMDebug(@"[%d]INSERT VALUE SQL:%@", successed, sql);
-
-            if (!successed) {
-                sql = [PPSqliteORMSQL sqlForUpdate:object];
+            if (![self isExistForObject:object db:db]) {
+                NSString* sql = [PPSqliteORMSQL sqlForInsert:object];
+                successed = [db executeUpdate:sql];
+                PPSqliteORMDebug(@"[%d]INSERT VALUE SQL:%@", successed, sql);
+            } else {
+                NSString* sql = [PPSqliteORMSQL sqlForUpdate:object];
                 successed = [db executeUpdate:sql];
                 PPSqliteORMDebug(@"[%d]UPDATE VALUE SQL:%@", successed, sql);
-
             }
+
             if (!successed) {
                 result = PPSqliteORMErrorMacro(PPSqliteORMWriteFailed);
             }
@@ -240,11 +253,13 @@
             BOOL successed = YES;
             id result;
             for (NSObject<PPSqliteORMProtocol> * object in objects) {
-                NSString* sql = [PPSqliteORMSQL sqlForInsert:object];
-                successed = [db executeUpdate:sql];
-                PPSqliteORMDebug(@"[%d]INSERT VALUE SQL:%@", successed, sql);
-                if (!successed) {
-                    sql = [PPSqliteORMSQL sqlForUpdate:object];
+                
+                if (![self isExistForObject:object db:db]) {
+                    NSString* sql = [PPSqliteORMSQL sqlForInsert:object];
+                    successed = [db executeUpdate:sql];
+                    PPSqliteORMDebug(@"[%d]INSERT VALUE SQL:%@", successed, sql);
+                } else {
+                    NSString* sql = [PPSqliteORMSQL sqlForUpdate:object];
                     successed = [db executeUpdate:sql];
                     PPSqliteORMDebug(@"[%d]UPDATE VALUE SQL:%@", successed, sql);
                 }
@@ -382,6 +397,18 @@
         [rs close];
         [self executeCompleteAsyn:complete successed:YES result:result];
     }];
+}
+
+- (void)isExist:(id <PPSqliteORMProtocol>)object complete:(PPSqliteORMComplete)complete {
+    if (!object) {
+        if (complete) complete(NO, nil);
+    }
+    
+    [_fmdbQueue inDatabase:^(FMDatabase *db) {
+        BOOL exist = [self isExistForObject:object db:db];
+        [self executeCompleteAsyn:complete successed:exist result:nil];
+    }];
+    
 }
 
 @end

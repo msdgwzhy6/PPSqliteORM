@@ -57,10 +57,19 @@
         
         if (!first) [columns appendString:@","];
         first = NO;
-        [columns appendFormat:@"%@ %@", key, typeMap[map[key]][1]];
+        
+        NSString* sqlType = typeMap[map[key]][1];
+        [columns appendFormat:@"%@ %@", key, sqlType];
         if (beAssignPrimaryKey && [primaryKey isEqualToString:key]) {
             [columns appendFormat:@" PRIMARY KEY"];
             beAssignPrimaryKey = NO;
+        }
+        
+        //设置默认值
+        if ([sqlType isEqualToString:@"INTEGER"]) {
+            [columns appendFormat:@" DEFAULT 0"];
+        } else if ([sqlType isEqualToString:@"REAL"]) {
+            [columns appendFormat:@" DEFAULT 0.0"];
         }
     }
 
@@ -100,10 +109,8 @@
 
     NSDictionary* map = [[object class] variableMap];
     BOOL first = YES;
-    
     for (NSString* key in [map allKeys]) {
         if (!typeMap[map[key]]) continue;
-
         NSString* value = [[(NSObject*)object valueForKey:key] sqlValue];
         if (value) {
             if (!first) {
@@ -117,6 +124,14 @@
     }
 
     return [NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)", tableName, columns, values];
+}
+
++ (NSString* )sqlForCheck:(id<PPSqliteORMProtocol>)object {
+    NSString* tableName = [[object class] tableName];
+    NSString* primaryKey = [[object class] primaryKey];
+    NSString* value = [[(NSObject*)object valueForKey:primaryKey] sqlValue];
+    
+    return [NSString stringWithFormat:@"SELECT 1 FROM %@ WHERE %@=%@", tableName, primaryKey, value];
 }
 
 + (NSString* )sqlForUpdate:(id<PPSqliteORMProtocol>)object {
@@ -165,9 +180,9 @@
 
 + (NSString* )sqlForCount:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition {
     if (!condition || [condition isEqualToString:@""]) {
-        return [NSString stringWithFormat:@"SELECT count(*) FROM %@", [clazz tableName]];
+        return [NSString stringWithFormat:@"SELECT count(1) FROM %@", [clazz tableName]];
     } else {
-        return [NSString stringWithFormat:@"SELECT count(*) FROM %@ WHERE %@", [clazz tableName], condition];
+        return [NSString stringWithFormat:@"SELECT count(1) FROM %@ WHERE %@", [clazz tableName], condition];
     }
 }
 
