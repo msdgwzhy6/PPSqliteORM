@@ -11,14 +11,12 @@
 
 @implementation NSDictionary (SQL)
 - (NSString* )sqlValue {
-    NSData* data = [NSJSONSerialization dataWithJSONObject:self options:NSJSONWritingPrettyPrinted error:nil];
-    NSString* str = [NSString stringWithCString:[data bytes] encoding:NSUTF8StringEncoding];
-    return [str sqlValue];
+    
+    return [[self JSONString] sqlValue];
 }
 
 + (id)objectForSQL:(NSString* )sql {
     if (!sql) return nil;
-    
-    return [NSJSONSerialization JSONObjectWithData:[sql dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:nil];
+    return [sql objectFromJSONString];
 }
 @end

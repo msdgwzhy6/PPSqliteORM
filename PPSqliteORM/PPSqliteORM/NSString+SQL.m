@@ -30,7 +30,7 @@
 
 @implementation NSString (SQL)
 - (NSString* )sqlValue {
-    return [NSString stringWithFormat:@"'%@'", self];
+    return [NSString stringWithFormat:@"'%@'", [self stringByReplacingOccurrencesOfString:@"'" withString:@"''"]];
 }
 
 + (id)objectForSQL:(NSString* )sql {

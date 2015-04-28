@@ -132,4 +132,18 @@ static NSMutableDictionary* lowercaseKeyMapCache;
     return nil;
 }
 
++ (id)objectFromSuperObject:(id)object {
+    if ([[self class] isSubclassOfClass:[object class]]) {
+        NSDictionary* map = [[object class] variableMap];
+        
+        id objout = [[self alloc] init];
+        for (NSString* key in map) {
+            id value = [object valueForKey:key];
+            if (value) [objout setValue:value forKey:key];
+        }
+        return objout;
+    }
+    return nil;
+}
+
 @end

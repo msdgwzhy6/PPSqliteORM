@@ -75,4 +75,6 @@ __rawType:@[__objcType, __sqliteType]
  */
 + (id)objectForSQL:(NSString* )sql;
 
++ (id)objectFromSuperObject:(id)object;
+
 @end

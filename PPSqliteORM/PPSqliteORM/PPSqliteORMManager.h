@@ -29,9 +29,7 @@
 #import <Foundation/Foundation.h>
 #import "PPSqliteORMProtocol.h"
 
-#define PPSqliteORMDebugEnable    1
-
-#if PPSqliteORMDebugEnable
+#ifdef DEBUG
 #define __FILE_WITHOUT_PATH__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
 #define PPSqliteORMDebug(fmt, ...) \
@@ -140,6 +138,18 @@ typedef void(^PPSqliteORMComplete)(BOOL successed, id result);
                         result is the NSArray of object.
  */
 - (void)read:(Class <PPSqliteORMProtocol>)clazz condition:(NSString* )condition complete:(PPSqliteORMComplete)complete;
+
+/**
+ * Read object from database.
+ *
+ * @param clazz         Assign the class
+ * @param condition     SQL condition(like and, or, group by, order by, =, >, < and so)
+ * @param complete      Callback for complete
+ result is the NSArray of object.
+ */
+- (void)deleteObject:(Class <PPSqliteORMProtocol>)clazz condition:(NSString* )condition complete:(PPSqliteORMComplete)complete;
+
+
 
 /**
  * Get the count of the clazz under the condition

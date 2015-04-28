@@ -206,7 +206,6 @@
     FMResultSet* rs = [db executeQuery:sql];
     PPSqliteORMDebug(@"CHECK TABLE SQL:%@", sql);
     if ([rs next]) {
-        NSLog(@"isExistForObject:%d", [rs intForColumnIndex:0]);
         exist = YES;
     }
     
@@ -347,6 +346,41 @@
         }
         [self executeCompleteAsyn:complete successed:successed result:result];
     }];
+}
+
+- (void)deleteObject:(Class <PPSqliteORMProtocol>)clazz condition:(NSString* )condition complete:(PPSqliteORMComplete)complete {
+    NSString* tableName = [clazz tableName];
+    NSString* primaryKey = [clazz primary];
+    
+    if (clazz) {
+        //check where assign primary key
+        if (!primaryKey) {
+            [self executeComplete:complete successed:NO result:PPSqliteORMErrorMacro(PPSqliteORMNotAssignPrimaryKey)];
+            return;
+        }
+        
+        //check table
+        [_fmdbQueue inDatabase:^(FMDatabase *db) {
+            BOOL successed = YES;
+            id result;
+            
+            if (tableName && [db tableExists:tableName]) {
+                NSString* sql = [PPSqliteORMSQL sqlForDelete:clazz where:condition];
+                successed = [db executeUpdate:sql];
+                PPSqliteORMDebug(@"[%d]DELETE VALUE SQL:%@", successed, sql);
+                
+                if (!successed) {
+                    result = PPSqliteORMErrorMacro(PPSqliteORMDeleteFailed);
+                }
+            } else {
+                result = PPSqliteORMErrorMacro(PPSqliteORMUsedWithoutRegister);
+            }
+            [self executeCompleteAsyn:complete successed:successed result:result];
+        }];
+    } else {
+        if (complete) complete(YES, nil);
+    }
+
 }
 
 - (void)read:(Class <PPSqliteORMProtocol>)clazz condition:(NSString* )condition complete:(PPSqliteORMComplete)complete {

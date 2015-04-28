@@ -42,6 +42,7 @@
 + (NSString* )sqlForUpdate:(id<PPSqliteORMProtocol>)object;
 + (NSString* )sqlForDelete:(id<PPSqliteORMProtocol>)object;
 + (NSString* )sqlForDeleteAll:(Class<PPSqliteORMProtocol>)clazz;
++ (NSString* )sqlForDelete:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition;
 + (NSString* )sqlForQuery:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition;
 + (NSString* )sqlForCount:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition;
 

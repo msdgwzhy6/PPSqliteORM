@@ -122,6 +122,7 @@
                 [values appendString:value?value:@""];
             }
     }
+    
 
     return [NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)", tableName, columns, values];
 }
@@ -165,6 +166,16 @@
 
     return [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@ = %@", tableName, primaryKey, [[(NSObject*)object valueForKey:primaryKey] sqlValue]];
 }
+
++ (NSString* )sqlForDelete:(Class<PPSqliteORMProtocol>)clazz where:(NSString* )condition {
+    if (!condition || [condition isEqualToString:@""]) {
+        return [NSString stringWithFormat:@"DELETE FROM %@", [clazz tableName]];
+    } else {
+        return [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", [clazz tableName], condition];
+    }
+}
+
+
 
 + (NSString* )sqlForDeleteAll:(Class<PPSqliteORMProtocol>)clazz {
     return [NSString stringWithFormat:@"DELETE FROM %@", [clazz tableName]];
